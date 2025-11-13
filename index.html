@@ -1,204 +1,22 @@
 <!DOCTYPE html>
-<html lang="ha">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amah Medicine Store Ribah</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .medicine-card {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 10px;
-      margin: 10px;
-      text-align: center;
-      transition: transform 0.2s ease;
-    }
-    .medicine-card:hover { transform: scale(1.05); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting...</title>
+<script>
+window.onload = () => {
+  // Idan logged in ne sai ya tafi dashboard, in ba haka ba login
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    window.location.href = "dashboard.html";
+  } else {
+    window.location.href = "login.html";
+  }
+};
 
-    .medicine-card img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .medicine-card h3 {
-      margin: 5px 0;
-      color: #00695c;
-    }
-    .medicine-card p {
-      margin: 4px 0;
-    }
-
-    .btn-cart {
-      background: #00796b;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 5px;
-    }
-
-    .btn-cart:hover {
-      background: #004d40;
-    }
-
-    .tips-box {
-      background: #f0fdfa;
-      border-radius: 10px;
-      padding: 10px;
-      font-style: italic;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      transition: opacity 0.6s ease;
-    }
-  </style>
+</script>
 </head>
 <body>
-  <header class="site-header">
-    <div>
-      <img src="images/Amah Medicine Store Logo .png" alt="Amah Medicine Store Logo .png" class="site-logo">
-      <div class="site-title">
-        <h1>💉Amah Medicine Store Ribah💊</h1>
-        <p class="tagline"><i>Health & Wellness at Your Doorstep</i></p>
-      </div>
-    </div>
-
-    <nav class="main-nav">
-      <a href="index.html">Home</a>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#health">Health Tips</a>
-      <a href="dashboard.html" class="btn-admin">Admin</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
-
-  <main>
-   <section id="hero" class="hero-card center">
-      <h2>Welcome to Amah Medicine Store</h2>
-      <p><i>Your trusted health partner in Ribah, Kebbi State.</i></p>
-      <a class="btn" href="#contact">Visit Our Store</a>
-    </section>
-
-    <section id="about" class="content center">
-      <h2>About</h2>
-      <i><p id="aboutText">A licensed pharmaceutical store located in Ribah, Kebbi State, Nigeria.  We provide trusted medicines, personal care products, and services with integrity and care.</p></i>
-    </section>
-
-    <section id="services" class="content center">
-      <h2>Our Services</h2>
-      <ul class="services-list">
-        <li>💊 Prescription & Over-the-Counter Medicines</li>
-        <li>💅 Health & Beauty Products</li>
-        <li>🩺 Medical Consultation</li>
-        <li>🚚 Home Delivery Services</li>
-        <li>🧠 Health Tips</li>
-      </ul>
-    </section>
-
-    <!-- 💊 MEDICINES SECTION -->
-    <section id="medicineSection" class="content center">
-      <h2>Available Medicines / Products</h2>
-      <div id="medicineList"><p>Loading medicines...</p></div>
-    </section>
-
-    <!-- 💡 HEALTH TIPS SECTION -->
-    <section id="health" class="content center">
-      <h2>Health Tips</h2>
-      <div id="tipsList" class="tips-box"><p>Loading tips...</p></div>
-    </section>
-
-    <section id="contact" class="contact-section center">
-      <h2>Contact Us</h2>
-      <p>📍 Opposite Nemi Naka Ribah Town, Danko/Wasagu LGA, Kebbi State, Nigeria.</p>
-
-      <div class="contact-buttons">
-        <a class="btn whatsapp" href="https://wa.me/2348031577957" target="_blank" rel="noopener">💬 WhatsApp</a>
-        <a class="btn call" href="tel:+2347088900047">📞 Call Us</a>
-        <a class="btn email" href="mailto:amahmedicinestoreribah@gmail.com">✉️ Email</a>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 Amah Medicine Store. All rights reserved.</p>
-  </footer>
-
-  <script>
-    // ✅ Render Medicines
-    function renderMedicines() {
-      const meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
-      const list = document.getElementById("medicineList");
-      if (meds.length === 0) {
-        list.innerHTML = "<p>No medicines available yet.</p>";
-        return;
-      }
-
-      list.innerHTML = meds.map(m => `
-        <div class="medicine-card">
-          <img src="${m.photo || 'https://via.ribah.com/120?text=No+Image'}" alt="${m.name}">
-          <h3>${m.name}</h3>
-          <p><strong>₦${m.price}</strong></p>
-          <p>${m.description || 'No description provided.'}</p>
-          <button class="btn-cart">🛒 Add to Cart</button>
-          <button class="btn-cart">📦 Order Now</button>
-        </div>
-      `).join("");
-    }
-
-    // ✅ Render Health Tips (Auto Rotate)
-    function renderTips() {
-      const tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
-      const tipsList = document.getElementById("tipsList");
-      if (tips.length === 0) {
-        tipsList.innerHTML = "<p><em>No health tips yet.</em></p>";
-        return;
-      }
-
-      let i = 0;
-      function showNextTip() {
-        const tip = tips[i];
-        tipsList.style.opacity = 0;
-        setTimeout(() => {
-          tipsList.innerHTML = `<p>💡 <i>${tip}</i></p>`;
-          tipsList.style.opacity = 1;
-        }, 300);
-        i = (i + 1) % tips.length;
-      }
-
-      showNextTip();
-      setInterval(showNextTip, 4000);
-    }
-
-    // ✅ Listen to changes (auto sync)
-    window.addEventListener("storage", () => {
-      renderMedicines();
-      renderTips();
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      renderMedicines();
-      renderTips();
-    });
-  </script><script>
-// 🧠 SIMPLE ADMIN LOGIN PROTECTION
-function openAdminLogin() {
-  const pass = prompt("🔒 Enter Admin Password:");
-  if (pass === "admin123") {
-    localStorage.setItem("isAdmin", "true");
-    window.location.href = "admin/dashboard.html";
-  } else if (pass === null) {
-    return; // user cancelled
-  } else {
-    alert("❌ Incorrect password!");
-  }
-}
-</script>
-</section>
+<p>Redirecting...</p>
 </body>
 </html>
-
-
-
