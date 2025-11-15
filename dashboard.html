@@ -4,365 +4,316 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amah Dashboard</title>
+
+<!-- 🔒 LOGIN PROTECTION -->
+<script>
+if (localStorage.getItem("isLoggedIn") !== "true") {
+   window.location.href = "login.html";
+}
+</script>
+
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f0f8ff;
+  background: #eef2f3;
   margin: 0;
   padding: 0;
 }
+
 header {
-  background: #004a7c;
+  background: #00796b;
   color: white;
-  padding: 15px;
+  padding: 10px;
   text-align: center;
-  font-size: 22px;
-  font-weight: bold;
 }
+
 .container {
-  width: 90%;
-  margin: auto;
   padding: 20px;
 }
+
+/* Cards */
 .card {
   background: white;
   padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px #ccc;
+  margin: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-input, textarea, select {
+
+input, textarea, button {
   width: 100%;
   padding: 10px;
-  margin-top: 8px;
+  margin: 6px 0;
   border-radius: 6px;
   border: 1px solid #aaa;
 }
+
 button {
-  padding: 10px;
-  margin-top: 10px;
-  width: 100%;
-  border: none;
+  background: #00796b;
   color: white;
-  background: #007bff;
+  border: none;
+}
+
+button:hover {
+  background: #005f52;
+}
+
+/* List Items */
+.item-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 6px 0;
   border-radius: 6px;
-  cursor: pointer;
+  background: #fafafa;
 }
-.delete-btn {
-  background: #d9534f !important;
+
+.item-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
 }
-.edit-btn {
-  background: #5bc0de !important;
+
+.flex {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
-.logout-btn {
-  background: #ff4444 !important;
-}
-img {
-  max-width: 100px;
-  margin-top: 10px;
-  border-radius: 5px;
+
+.actions button {
+  width: auto;
+  margin-right: 5px;
+  padding: 6px 8px;
 }
 </style>
 </head>
 
 <body>
 
-<header>🔐 Amah Medicine Store - Admin Dashboard</header>
+<header>
+  <h2>🛠️ Amah Medicine Store — Admin Dashboard</h2>
+  <button onclick="logout()">Logout</button>
+</header>
 
 <div class="container">
 
-<!-- LOGOUT -->
-<button class="logout-btn" onclick="logout()">Logout</button>
-
-<!-- CHANGE PASSWORD -->
+<!-- ⭐ CHANGE PASSWORD -->
 <div class="card">
-<h3>Change Admin Password</h3>
-<input type="password" id="oldPass" placeholder="Old Password">
-<input type="password" id="newPass" placeholder="New Password">
-<button onclick="changePassword()">Change Password</button>
+  <h3>🔐 Change Username & Password</h3>
 
-<button onclick="resetDefaultPass()" style="background:#b30000">
-Reset Password to Default (Amah123)
-</button>
+  <input id="newUser" placeholder="New Username">
+  <input id="newPass" placeholder="New Password">
+  <button onclick="changeCredentials()">Update Login Details</button>
 </div>
 
-<!-- ADD MEDICINE -->
+<!-- ⭐ ADD MEDICINE -->
 <div class="card">
-<h3>Add Medicine</h3>
-<input type="text" id="medName" placeholder="Medicine Name">
-<input type="number" id="medPrice" placeholder="Price (₦)">
-<textarea id="medDesc" placeholder="Description"></textarea>
-<input type="file" id="medImg" accept="image/*">
-<button onclick="addMedicine()">Add Medicine</button>
+  <h3>💊 Add Medicine</h3>
+
+  <input id="medName" placeholder="Medicine Name">
+  <input id="medPrice" placeholder="Price (₦)">
+  <textarea id="medDesc" placeholder="Description"></textarea>
+  <input type="file" id="medPhoto">
+
+  <button onclick="addMedicine()">Add Medicine</button>
 </div>
 
-<!-- MEDICINE LIST -->
+<!-- ⭐ MEDICINES LIST -->
 <div class="card">
-<h3>Medicine List</h3>
-<div id="medicineList"></div>
+  <h3>📦 Medicines List</h3>
+  <div id="medList"></div>
 </div>
 
-<!-- ADD HEALTH TIP -->
+<!-- ⭐ ADD TIPS -->
 <div class="card">
-<h3>Add Health Tip</h3>
-<textarea id="tipText" placeholder="Enter Health Tip"></textarea>
-<button onclick="addTip()">Add Tip</button>
+  <h3>💡 Add Health Tip</h3>
+
+  <textarea id="tipText" placeholder="Write tip here..."></textarea>
+  <button onclick="addTip()">Add Tip</button>
 </div>
 
-<!-- TIPS LIST -->
+<!-- ⭐ TIPS LIST -->
 <div class="card">
-<h3>Health Tips List</h3>
-<div id="tipsList"></div>
+  <h3>📘 Health Tips List</h3>
+  <div id="tipList"></div>
 </div>
 
-<!-- BACKUP & RESTORE -->
+<!-- ⭐ BACKUP & RESTORE -->
 <div class="card">
-<h3>Backup & Restore</h3>
+  <h3>📂 Backup & Restore</h3>
 
-<button onclick="downloadBackup()">Download Backup</button>
-
-<input type="file" id="restoreFile" onchange="restoreBackup(this)">
+  <button onclick="downloadBackup()">Download Backup File</button>
+  <input type="file" id="restoreFile">
+  <button onclick="restoreBackup()">Restore Backup</button>
 </div>
 
 </div>
-
 
 <script>
-/* ---------------------------------------
-   SECURITY: REDIRECT IF NOT LOGGED IN
----------------------------------------- */
-if (localStorage.getItem("isLoggedIn") !== "true") {
-    window.location.href = "login.html";
-}
-
-/* ---------------------------------------
-   DEFAULT ADMIN ACCOUNT
----------------------------------------- */
-const defaultUser = "admin";
-const defaultPass = "Amah123";
-
-if (!localStorage.getItem("adminUser")) {
-    localStorage.setItem("adminUser", defaultUser);
-}
-if (!localStorage.getItem("adminPass")) {
-    localStorage.setItem("adminPass", defaultPass);
-}
-
-/* LOGOUT */
+// ---------------------------
+// 🔐 LOGIN MANAGEMENT
+// ---------------------------
 function logout() {
-    localStorage.setItem("isLoggedIn", "false");
-    window.location.href = "login.html";
+  localStorage.setItem("isLoggedIn", "false");
+  window.location.href = "login.html";
 }
 
-/* CHANGE PASSWORD */
-function changePassword() {
-    let oldp = document.getElementById("oldPass").value;
-    let newp = document.getElementById("newPass").value;
+function changeCredentials() {
+  const u = document.getElementById("newUser").value;
+  const p = document.getElementById("newPass").value;
 
-    if (oldp !== localStorage.getItem("adminPass")) {
-        alert("Incorrect old password!");
-        return;
-    }
-    localStorage.setItem("adminPass", newp);
-    alert("Password updated!");
-    document.getElementById("oldPass").value = "";
-    document.getElementById("newPass").value = "";
+  if (!u || !p) return alert("Enter username & password");
+
+  localStorage.setItem("adminUser", u);
+  localStorage.setItem("adminPass", p);
+
+  alert("✔ Login details updated!");
 }
 
-/* RESET PASSWORD */
-function resetDefaultPass() {
-    localStorage.setItem("adminUser", defaultUser);
-    localStorage.setItem("adminPass", defaultPass);
-    alert("Password reset to Amah123");
-}
-
-/* ---------------------------------------
-   MEDICINES
----------------------------------------- */
+// ---------------------------
+// 💊 MEDICINE HANDLING
+// ---------------------------
 function addMedicine() {
-    let name = document.getElementById("medName").value;
-    let price = document.getElementById("medPrice").value;
-    let desc = document.getElementById("medDesc").value;
-    let imgFile = document.getElementById("medImg").files[0];
+  const name = document.getElementById("medName").value;
+  const price = document.getElementById("medPrice").value;
+  const desc = document.getElementById("medDesc").value;
+  const photoFile = document.getElementById("medPhoto").files[0];
 
-    if (!name || !price || !desc) {
-        alert("Please fill all fields");
-        return;
-    }
+  if (!name || !price) return alert("Name and price required!");
 
-    if (!imgFile) {
-        alert("Please select a picture!");
-        return;
-    }
-
-    let reader = new FileReader();
-    reader.onload = function(e) {
-        let medicines = JSON.parse(localStorage.getItem("medicines") || "[]");
-
-        medicines.push({
-            id: Date.now(),
-            name,
-            price,
-            desc,
-            img: e.target.result
-        });
-
-        localStorage.setItem("medicines", JSON.stringify(medicines));
-        alert("Medicine added!");
-        loadMedicines();
-        updateIndexPage();
-    };
-    reader.readAsDataURL(imgFile);
+  if (photoFile) {
+    const reader = new FileReader();
+    reader.onload = () => saveMedicine(name, price, desc, reader.result);
+    reader.readAsDataURL(photoFile);
+  } else {
+    saveMedicine(name, price, desc, "");
+  }
 }
 
-function loadMedicines() {
-    let list = document.getElementById("medicineList");
-    list.innerHTML = "";
+function saveMedicine(name, price, desc, photo) {
+  let meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
+  meds.push({ id: Date.now(), name, price, desc, photo });
+  localStorage.setItem("amah_medicines", JSON.stringify(meds));
 
-    let meds = JSON.parse(localStorage.getItem("medicines") || "[]");
-
-    meds.forEach(m => {
-        list.innerHTML += `
-            <div class="card">
-                <img src="${m.img}">
-                <h4>${m.name}</h4>
-                <p>₦${m.price}</p>
-                <p>${m.desc}</p>
-                <button class="edit-btn" onclick="editMedicine(${m.id})">Edit</button>
-                <button class="delete-btn" onclick="deleteMedicine(${m.id})">Delete</button>
-            </div>`;
-    });
+  renderMedicines();
+  alert("✔ Medicine added!");
 }
 
-function editMedicine(id) {
-    let meds = JSON.parse(localStorage.getItem("medicines"));
+function renderMedicines() {
+  let meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
+  const list = document.getElementById("medList");
 
-    let med = meds.find(x => x.id === id);
+  if (meds.length === 0) {
+    list.innerHTML = "<p>No medicines yet.</p>";
+    return;
+  }
 
-    let newName = prompt("New name:", med.name);
-    let newPrice = prompt("New price:", med.price);
-    let newDesc = prompt("New description:", med.desc);
-
-    med.name = newName;
-    med.price = newPrice;
-    med.desc = newDesc;
-
-    localStorage.setItem("medicines", JSON.stringify(meds));
-    loadMedicines();
-    updateIndexPage();
+  list.innerHTML = meds.map(m => `
+    <div class="item-card">
+      <div class="flex">
+        <img src="${m.photo}">
+        <div>
+          <b>${m.name}</b><br>
+          ₦${m.price}<br>
+          <small>${m.desc}</small>
+        </div>
+      </div>
+      <div class="actions">
+        <button onclick="deleteMedicine(${m.id})">Delete</button>
+      </div>
+    </div>
+  `).join("");
 }
 
 function deleteMedicine(id) {
-    let meds = JSON.parse(localStorage.getItem("medicines"));
-    localStorage.setItem("medicines", JSON.stringify(meds.filter(x => x.id !== id)));
-    loadMedicines();
-    updateIndexPage();
+  let meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
+  meds = meds.filter(x => x.id !== id);
+  localStorage.setItem("amah_medicines", JSON.stringify(meds));
+  renderMedicines();
 }
 
-/* ---------------------------------------
-   HEALTH TIPS
----------------------------------------- */
+// ---------------------------
+// 💡 HEALTH TIPS
+// ---------------------------
 function addTip() {
-    let text = document.getElementById("tipText").value;
+  const t = document.getElementById("tipText").value;
+  if (!t) return alert("Write a tip!");
 
-    if (!text) {
-        alert("Enter a tip!");
-        return;
-    }
+  let tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
+  tips.push(t);
+  localStorage.setItem("amah_tips", JSON.stringify(tips));
 
-    let tips = JSON.parse(localStorage.getItem("tips") || "[]");
-
-    tips.push({ id: Date.now(), text });
-
-    localStorage.setItem("tips", JSON.stringify(tips));
-    document.getElementById("tipText").value = "";
-    loadTips();
-    updateIndexPage();
+  renderTips();
 }
 
-function loadTips() {
-    let list = document.getElementById("tipsList");
-    list.innerHTML = "";
+function renderTips() {
+  let tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
+  const list = document.getElementById("tipList");
 
-    let tips = JSON.parse(localStorage.getItem("tips") || "[]");
+  if (tips.length === 0) {
+    list.innerHTML = "<p>No tips yet.</p>";
+    return;
+  }
 
-    tips.forEach(t => {
-        list.innerHTML += `
-            <div class="card">
-                <p>${t.text}</p>
-                <button class="edit-btn" onclick="editTip(${t.id})">Edit</button>
-                <button class="delete-btn" onclick="deleteTip(${t.id})">Delete</button>
-            </div>`;
-    });
+  list.innerHTML = tips.map((t,i) => `
+    <div class="item-card">
+      ${t}
+      <div class="actions">
+        <button onclick="deleteTip(${i})">Delete</button>
+      </div>
+    </div>
+  `).join("");
 }
 
-function editTip(id) {
-    let tips = JSON.parse(localStorage.getItem("tips"));
-    let tip = tips.find(t => t.id === id);
-
-    let newText = prompt("Edit tip:", tip.text);
-    tip.text = newText;
-
-    localStorage.setItem("tips", JSON.stringify(tips));
-    loadTips();
-    updateIndexPage();
+function deleteTip(i) {
+  let tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
+  tips.splice(i,1);
+  localStorage.setItem("amah_tips", JSON.stringify(tips));
+  renderTips();
 }
 
-function deleteTip(id) {
-    let tips = JSON.parse(localStorage.getItem("tips"));
-    localStorage.setItem("tips", JSON.stringify(tips.filter(t => t.id !== id)));
-    loadTips();
-    updateIndexPage();
-}
-
-/* ---------------------------------------
-   BACKUP / RESTORE
----------------------------------------- */
+// ---------------------------
+// 📂 BACKUP / RESTORE
+// ---------------------------
 function downloadBackup() {
-    let data = {
-        medicines: JSON.parse(localStorage.getItem("medicines") || "[]"),
-        tips: JSON.parse(localStorage.getItem("tips") || "[]")
-    };
+  const data = {
+    medicines: JSON.parse(localStorage.getItem("amah_medicines")) || [],
+    tips: JSON.parse(localStorage.getItem("amah_tips")) || []
+  };
 
-    let blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-    let url = URL.createObjectURL(blob);
+  const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
 
-    let a = document.createElement("a");
-    a.href = url;
-    a.download = "backup_data.json";
-    a.click();
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "backup_data.json";
+  a.click();
 }
 
-function restoreBackup(input) {
-    let file = input.files[0];
-    let reader = new FileReader();
+function restoreBackup() {
+  const file = document.getElementById("restoreFile").files[0];
+  if (!file) return alert("Upload backup file!");
 
-    reader.onload = function(e) {
-        let data = JSON.parse(e.target.result);
-        localStorage.setItem("medicines", JSON.stringify(data.medicines));
-        localStorage.setItem("tips", JSON.stringify(data.tips));
+  const reader = new FileReader();
+  reader.onload = () => {
+    const data = JSON.parse(reader.result);
 
-        alert("Data restored!");
-        loadMedicines();
-        loadTips();
-        updateIndexPage();
-    };
+    localStorage.setItem("amah_medicines", JSON.stringify(data.medicines));
+    localStorage.setItem("amah_tips", JSON.stringify(data.tips));
 
-    reader.readAsText(file);
+    renderMedicines();
+    renderTips();
+
+    alert("✔ Data restored!");
+  };
+  reader.readAsText(file);
 }
 
-/* ---------------------------------------
-   AUTO SYNC TO index.html
----------------------------------------- */
-function updateIndexPage() {
-    // Netlify cannot edit files directly.
-    // But the live site reads directly from localStorage automatically.
-}
-
-/* INITIAL LOAD */
-loadMedicines();
-loadTips();
+document.addEventListener("DOMContentLoaded", () => {
+  renderMedicines();
+  renderTips();
+});
 </script>
 
 </body>
-  </html>
+</html>
