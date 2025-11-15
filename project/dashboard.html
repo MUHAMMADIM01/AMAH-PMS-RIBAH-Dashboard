@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard — Amah Medicine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h2>Amah Medicine Store — Dashboard</h2>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Add Medicine</h3>
+      <input id="mName" placeholder="Name">
+      <input id="mPrice" placeholder="Price (₦)">
+      <textarea id="mDesc" placeholder="Short description"></textarea>
+      <input id="mFile" type="file" accept="image/*">
+      <button id="addMedBtn">Add Medicine</button>
+      <p id="medMsg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h3>Medicine List</h3>
+      <div id="medList"></div>
+    </section>
+
+    <section class="card">
+      <h3>Add Health Tip</h3>
+      <input id="tipInput" placeholder="Type health tip then Add">
+      <button id="addTipBtn">Add Tip</button>
+      <p id="tipMsg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h3>Tips List</h3>
+      <div id="tipsList"></div>
+    </section>
+  </main>
+
+  <script type="module" src="firebase.js"></script>
+
+  <script type="module">
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      collection, addDoc, onSnapshot, deleteDoc, doc
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import {
+      ref as sRef, uploadBytes, getDownloadURL, refFromURL, deleteObject
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+
+    // ensure user logged in
+    onAuthStateChanged(window.auth, user => {
+      if (!user) {
+        localStorage.removeItem('isLoggedIn');
+        location.href = 'login.html';
+      } else {
+        startApp(user);
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await signOut(window.auth);
+      localStorage.removeItem('isLoggedIn');
+      location.href = 'login.html';
+    });
+
+    function startApp(user) {
+      // References
+      const medsCol = collection(window.db, 'medicines');
+      const tipsCol = collection(window.db, 'tips');
+
+      // UI nodes
+      const mName = document.getElementById('mName');
+      const mPrice = document.getElementById('mPrice');
+      const mDesc = document.getElementById('mDesc');
+      const mFile = document.getElementById('mFile');
+      const addMedBtn = document.getElementById('addMedBtn');
+      const medMsg = document.getElementById('medMsg');
+      const medList = document.getElementById('medList');
+
+      const tipInput = document.getElementById('tipInput');
+      const addTipBtn = document.getElementById('addTipBtn');
+      const tipMsg = document.getElementById('tipMsg');
+      const tipsList = document.getElementById('tipsList');
+
+      // Add Medicine (upload image then Firestore)
+      addMedBtn.addEventListener('click', async () => {
+        medMsg.textContent = '';
+        const name = mName.value.trim();
+        const price = mPrice.value.trim();
+        const desc = mDesc.value.trim();
+        const file = mFile.files[0];
+
+        if (!name || !price) { medMsg.textContent = 'Name and price required'; return; }
+
+        try {
+          let imageURL = '';
+          if (file) {
+            const path = `medicines/${user.uid}/${Date.now()}_${file.name}`;
+            const storageRef = sRef(window.storage, path);
+            await uploadBytes(storageRef, file);
+            imageURL = await getDownloadURL(storageRef);
+          }
+
+          await addDoc(medsCol, {
+            name, price, desc, imageURL, owner: user.uid, createdAt: Date.now()
+          });
+
+          mName.value = ''; mPrice.value = ''; mDesc.value = ''; mFile.value = '';
+          medMsg.textContent = 'Medicine added.';
+        } catch (e) {
+          medMsg.textContent = 'Error: ' + e.message;
+        }
+      });
+
+      // Listen medicines in real-time
+      onSnapshot(medsCol, snapshot => {
+        medList.innerHTML = '';
+        snapshot.forEach(docSnap => {
+          const d = docSnap.data();
+          const id = docSnap.id;
+          medList.innerHTML += `
+            <div class="item">
+              ${d.imageURL ? `<img src="${d.imageURL}" width="100">` : ''}
+              <div><strong>${escapeHtml(d.name)}</strong><br>₦${escapeHtml(d.price)}<br>${escapeHtml(d.desc || '')}</div>
+              <div>
+                <button onclick="deleteMedicine('${id}','${d.imageURL || ''}')">Delete</button>
+              </div>
+            </div>
+            <hr>
+          `;
+        });
+      });
+
+      // Add tip
+      addTipBtn.addEventListener('click', async () => {
+        tipMsg.textContent = '';
+        const t = tipInput.value.trim();
+        if (!t) { tipMsg.textContent = 'Enter a tip'; return; }
+        try {
+          await addDoc(tipsCol, { text: t, createdAt: Date.now(), owner: user.uid });
+          tipInput.value = '';
+          tipMsg.textContent = 'Tip added.';
+        } catch (e) {
+          tipMsg.textContent = 'Error: ' + e.message;
+        }
+      });
+
+      // Listen tips realtime
+      onSnapshot(tipsCol, snapshot => {
+        tipsList.innerHTML = '';
+        snapshot.forEach(docSnap => {
+          const d = docSnap.data();
+          const id = docSnap.id;
+          tipsList.innerHTML += `
+            <div class="item">
+              ${escapeHtml(d.text)}
+              <div><button onclick="deleteTip('${id}')">Delete</button></div>
+            </div><hr>
+          `;
+        });
+      });
+
+      // Expose delete functions to global scope (used in onclick markup)
+      window.deleteMedicine = async function(id, imageURL) {
+        try {
+          if (imageURL) {
+            // delete storage object
+            try {
+              const r = refFromURL(window.storage, imageURL);
+              await deleteObject(r);
+            } catch(err) {
+              console.warn('storage delete failed (maybe url not deleteable):', err.message);
+            }
+          }
+          await deleteDoc(doc(window.db, 'medicines', id));
+        } catch (e) {
+          alert('Delete failed: ' + e.message);
+        }
+      };
+
+      window.deleteTip = async function(id) {
+        try { await deleteDoc(doc(window.db,'tips',id)); } catch(e) { alert('Delete failed: ' + e.message); }
+      };
+
+      // small helper to avoid inserting unescaped HTML
+      function escapeHtml(s=''){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    }
+  </script>
+</body>
+</html>
