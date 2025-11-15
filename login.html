@@ -1,99 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amah Dashboard Login</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login | AMAH PMS RIBAH</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #eef2f3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-.login-card {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  width: 300px;
-}
+    .login-box {
+        width: 350px;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
 
-.login-card h2 {
-  text-align: center;
-  color: #00796b;
-}
+    h2 {
+        margin-bottom: 20px;
+    }
 
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: 1px solid #aaa;
-}
+    input {
+        width: 90%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
 
-button {
-  background: #00796b;
-  color: white;
-  border: none;
-}
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        background: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
 
-button:hover {
-  background: #005f52;
-}
+    button:hover {
+        background: #0c57c6;
+    }
 
-p {
-  text-align: center;
-}
+    .error {
+        color: red;
+        margin-top: 10px;
+        font-size: 14px;
+        display: none;
+    }
 </style>
 </head>
+
 <body>
 
-<div class="login-card">
-  <h2>🔐 Admin Login</h2>
+<div class="login-box">
+    <h2>Admin Login</h2>
 
-  <input type="text" id="username" placeholder="Username">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
+    <input type="text" id="username" placeholder="Enter Username" />
+    <input type="password" id="password" placeholder="Enter Password" />
 
-  <p id="msg"></p>
+    <button onclick="login()">Login</button>
+
+    <p class="error" id="errorMsg">Invalid username or password!</p>
 </div>
 
+
 <script>
-// ---------------------------
-// 🔑 DEFAULT CREDENTIALS
-// ---------------------------
-if (!localStorage.getItem("adminUser")) localStorage.setItem("adminUser", "admin");
-if (!localStorage.getItem("adminPass")) localStorage.setItem("adminPass", "Amah123");
+/*
+   DEFAULT LOGIN DETAILS:
+   Username: admin
+   Password: 12345
 
-// ---------------------------
-// 🟢 LOGIN FUNCTION
-// ---------------------------
+   NOTE:
+   - When user changes password in dashboard, this script automatically updates.
+*/
+
 function login() {
-  const u = document.getElementById("username").value;
-  const p = document.getElementById("password").value;
+    let storedUser = localStorage.getItem("adminUser") || "admin";
+    let storedPass = localStorage.getItem("adminPass") || "12345";
 
-  const adminU = localStorage.getItem("adminUser");
-  const adminP = localStorage.getItem("adminPass");
+    let inputUser = document.getElementById("username").value.trim();
+    let inputPass = document.getElementById("password").value.trim();
 
-  if (u === adminU && p === adminP) {
-    localStorage.setItem("isLoggedIn", "true");
-    window.location.href = "dashboard.html";
-  } else {
-    document.getElementById("msg").innerText = "❌ Invalid username or password!";
-    document.getElementById("msg").style.color = "red";
-  }
-}
-
-// ---------------------------
-// 🔄 AUTO REDIRECT IF LOGGED IN
-// ---------------------------
-if (localStorage.getItem("isLoggedIn") === "true") {
-  window.location.href = "dashboard.html";
+    if (inputUser === storedUser && inputPass === storedPass) {
+        localStorage.setItem("isLoggedIn", "true");
+        window.location.href = "dashboard.html";
+    } else {
+        document.getElementById("errorMsg").style.display = "block";
+    }
 }
 </script>
 
