@@ -1,318 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amah Dashboard</title>
-
-<!-- 🔒 LOGIN PROTECTION -->
-<script>
-if (localStorage.getItem("isLoggedIn") !== "true") {
-   window.location.href = "login.html";
-}
-</script>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #eef2f3;
-  margin: 0;
-  padding: 0;
-}
-
-header {
-  background: #00796b;
-  color: white;
-  padding: 10px;
-  text-align: center;
-}
-
-.container {
-  padding: 20px;
-}
-
-/* Cards */
-.card {
-  background: white;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-input, textarea, button {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-  border: 1px solid #aaa;
-}
-
-button {
-  background: #00796b;
-  color: white;
-  border: none;
-}
-
-button:hover {
-  background: #005f52;
-}
-
-/* List Items */
-.item-card {
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-  background: #fafafa;
-}
-
-.item-card img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.flex {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.actions button {
-  width: auto;
-  margin-right: 5px;
-  padding: 6px 8px;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-  <h2>🛠️ Amah Medicine Store — Admin Dashboard</h2>
-  <button onclick="logout()">Logout</button>
-</header>
+<h2>Amah Medicine Store — Dashboard</h2>
+<button onclick="logout()">Logout</button>
 
-<div class="container">
+<hr>
 
-<!-- ⭐ CHANGE PASSWORD -->
-<div class="card">
-  <h3>🔐 Change Username & Password</h3>
+<h3>Add Medicine</h3>
+<input id="mName" placeholder="Medicine Name">
+<input id="mPrice" placeholder="Price">
+<textarea id="mDesc" placeholder="Description"></textarea>
+<input type="file" id="mPhoto">
+<button onclick="addMedicine()">Add</button>
 
-  <input id="newUser" placeholder="New Username">
-  <input id="newPass" placeholder="New Password">
-  <button onclick="changeCredentials()">Update Login Details</button>
-</div>
+<h3>Medicine List</h3>
+<div id="medContainer"></div>
 
-<!-- ⭐ ADD MEDICINE -->
-<div class="card">
-  <h3>💊 Add Medicine</h3>
+<hr>
 
-  <input id="medName" placeholder="Medicine Name">
-  <input id="medPrice" placeholder="Price (₦)">
-  <textarea id="medDesc" placeholder="Description"></textarea>
-  <input type="file" id="medPhoto">
+<h3>Add Health Tip</h3>
+<input id="tipText" placeholder="Tip...">
+<button onclick="addTip()">Add Tip</button>
 
-  <button onclick="addMedicine()">Add Medicine</button>
-</div>
+<h3>Tips List</h3>
+<div id="tipContainer"></div>
 
-<!-- ⭐ MEDICINES LIST -->
-<div class="card">
-  <h3>📦 Medicines List</h3>
-  <div id="medList"></div>
-</div>
+<script type="module" src="firebase.js"></script>
 
-<!-- ⭐ ADD TIPS -->
-<div class="card">
-  <h3>💡 Add Health Tip</h3>
+<script type="module">
+  import {
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  <textarea id="tipText" placeholder="Write tip here..."></textarea>
-  <button onclick="addTip()">Add Tip</button>
-</div>
+  import {
+    collection, addDoc, getDocs, deleteDoc, doc, updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-<!-- ⭐ TIPS LIST -->
-<div class="card">
-  <h3>📘 Health Tips List</h3>
-  <div id="tipList"></div>
-</div>
+  import {
+    ref, uploadBytes, getDownloadURL
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
-<!-- ⭐ BACKUP & RESTORE -->
-<div class="card">
-  <h3>📂 Backup & Restore</h3>
+  // ⛔ Dashboard Protection
+  onAuthStateChanged(auth, user => {
+    if (!user) {
+      localStorage.setItem("isLoggedIn", "false");
+      location.href = "login.html";
+    }
+  });
 
-  <button onclick="downloadBackup()">Download Backup File</button>
-  <input type="file" id="restoreFile">
-  <button onclick="restoreBackup()">Restore Backup</button>
-</div>
+  // 🔓 Logout
+  window.logout = function () {
+    signOut(auth).then(() => {
+      localStorage.clear();
+      location.href = "login.html";
+    });
+  };
 
-</div>
+  // ➕ Add Medicine
+  window.addMedicine = async function () {
+    const name = mName.value;
+    const price = mPrice.value;
+    const desc = mDesc.value;
+    const file = mPhoto.files[0];
 
-<script>
-// ---------------------------
-// 🔐 LOGIN MANAGEMENT
-// ---------------------------
-function logout() {
-  localStorage.setItem("isLoggedIn", "false");
-  window.location.href = "login.html";
-}
+    if (!name || !price) return alert("Enter name & price");
 
-function changeCredentials() {
-  const u = document.getElementById("newUser").value;
-  const p = document.getElementById("newPass").value;
+    let imageURL = "";
 
-  if (!u || !p) return alert("Enter username & password");
+    if (file) {
+      const storageRef = ref(storage, "medicines/" + Date.now());
+      await uploadBytes(storageRef, file);
+      imageURL = await getDownloadURL(storageRef);
+    }
 
-  localStorage.setItem("adminUser", u);
-  localStorage.setItem("adminPass", p);
+    await addDoc(collection(db, "medicines"), {
+      name, price, desc, imageURL
+    });
 
-  alert("✔ Login details updated!");
-}
+    loadMedicines();
+  };
 
-// ---------------------------
-// 💊 MEDICINE HANDLING
-// ---------------------------
-function addMedicine() {
-  const name = document.getElementById("medName").value;
-  const price = document.getElementById("medPrice").value;
-  const desc = document.getElementById("medDesc").value;
-  const photoFile = document.getElementById("medPhoto").files[0];
+  // 📥 Load Medicines
+  async function loadMedicines() {
+    const snap = await getDocs(collection(db, "medicines"));
+    medContainer.innerHTML = "";
 
-  if (!name || !price) return alert("Name and price required!");
+    snap.forEach(docu => {
+      const d = docu.data();
 
-  if (photoFile) {
-    const reader = new FileReader();
-    reader.onload = () => saveMedicine(name, price, desc, reader.result);
-    reader.readAsDataURL(photoFile);
-  } else {
-    saveMedicine(name, price, desc, "");
-  }
-}
+      medContainer.innerHTML += `
+        <div class='card'>
+          <img src="${d.imageURL}" height="80"><br>
+          <b>${d.name}</b> - ₦${d.price}<br>
+          ${d.desc}<br>
 
-function saveMedicine(name, price, desc, photo) {
-  let meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
-  meds.push({ id: Date.now(), name, price, desc, photo });
-  localStorage.setItem("amah_medicines", JSON.stringify(meds));
-
-  renderMedicines();
-  alert("✔ Medicine added!");
-}
-
-function renderMedicines() {
-  let meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
-  const list = document.getElementById("medList");
-
-  if (meds.length === 0) {
-    list.innerHTML = "<p>No medicines yet.</p>";
-    return;
-  }
-
-  list.innerHTML = meds.map(m => `
-    <div class="item-card">
-      <div class="flex">
-        <img src="${m.photo}">
-        <div>
-          <b>${m.name}</b><br>
-          ₦${m.price}<br>
-          <small>${m.desc}</small>
+          <button onclick="deleteMed('${docu.id}')">Delete</button>
         </div>
-      </div>
-      <div class="actions">
-        <button onclick="deleteMedicine(${m.id})">Delete</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-function deleteMedicine(id) {
-  let meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
-  meds = meds.filter(x => x.id !== id);
-  localStorage.setItem("amah_medicines", JSON.stringify(meds));
-  renderMedicines();
-}
-
-// ---------------------------
-// 💡 HEALTH TIPS
-// ---------------------------
-function addTip() {
-  const t = document.getElementById("tipText").value;
-  if (!t) return alert("Write a tip!");
-
-  let tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
-  tips.push(t);
-  localStorage.setItem("amah_tips", JSON.stringify(tips));
-
-  renderTips();
-}
-
-function renderTips() {
-  let tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
-  const list = document.getElementById("tipList");
-
-  if (tips.length === 0) {
-    list.innerHTML = "<p>No tips yet.</p>";
-    return;
+      `;
+    });
   }
-
-  list.innerHTML = tips.map((t,i) => `
-    <div class="item-card">
-      ${t}
-      <div class="actions">
-        <button onclick="deleteTip(${i})">Delete</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-function deleteTip(i) {
-  let tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
-  tips.splice(i,1);
-  localStorage.setItem("amah_tips", JSON.stringify(tips));
-  renderTips();
-}
-
-// ---------------------------
-// 📂 BACKUP / RESTORE
-// ---------------------------
-function downloadBackup() {
-  const data = {
-    medicines: JSON.parse(localStorage.getItem("amah_medicines")) || [],
-    tips: JSON.parse(localStorage.getItem("amah_tips")) || []
+  window.deleteMed = async function (id) {
+    await deleteDoc(doc(db, "medicines", id));
+    loadMedicines();
   };
 
-  const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
-  const url = URL.createObjectURL(blob);
+  // ➕ Add Tip
+  window.addTip = async function () {
+    const text = tipText.value;
+    if (!text) return alert("Enter tip");
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "backup_data.json";
-  a.click();
-}
-
-function restoreBackup() {
-  const file = document.getElementById("restoreFile").files[0];
-  if (!file) return alert("Upload backup file!");
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    const data = JSON.parse(reader.result);
-
-    localStorage.setItem("amah_medicines", JSON.stringify(data.medicines));
-    localStorage.setItem("amah_tips", JSON.stringify(data.tips));
-
-    renderMedicines();
-    renderTips();
-
-    alert("✔ Data restored!");
+    await addDoc(collection(db, "tips"), { text });
+    loadTips();
   };
-  reader.readAsText(file);
-}
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderMedicines();
-  renderTips();
-});
+  async function loadTips() {
+    const snap = await getDocs(collection(db, "tips"));
+    tipContainer.innerHTML = "";
+
+    snap.forEach(docu => {
+      const d = docu.data();
+
+      tipContainer.innerHTML += `
+        <div class='card'>
+          ${d.text}
+          <button onclick="deleteTip('${docu.id}')">Delete</button>
+        </div>
+      `;
+    });
+  }
+  window.deleteTip = async function (id) {
+    await deleteDoc(doc(db, "tips", id));
+    loadTips();
+  };
+
+  loadMedicines();
+  loadTips();
 </script>
 
 </body>
