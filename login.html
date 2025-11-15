@@ -1,90 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin Login</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amah Dashboard Login</title>
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #e8f5e9;
+  background: #eef2f3;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: 0;
 }
-.login-box {
+
+.login-card {
   background: white;
-  padding: 25px;
-  width: 320px;
+  padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  width: 300px;
 }
-input {
+
+.login-card h2 {
+  text-align: center;
+  color: #00796b;
+}
+
+input, button {
   width: 100%;
   padding: 10px;
   margin: 8px 0;
   border-radius: 6px;
-  border: 1px solid #777;
+  border: 1px solid #aaa;
 }
+
 button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 12px;
   background: #00796b;
-  border: none;
   color: white;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
+  border: none;
 }
+
 button:hover {
-  background: #004d40;
+  background: #005f52;
 }
-.error {
-  color: red;
+
+p {
   text-align: center;
-  margin-top: 5px;
 }
 </style>
 </head>
-
 <body>
 
-<div class="login-box">
-  <h2>Admin Login</h2>
+<div class="login-card">
+  <h2>🔐 Admin Login</h2>
 
   <input type="text" id="username" placeholder="Username">
   <input type="password" id="password" placeholder="Password">
-
   <button onclick="login()">Login</button>
 
-  <p class="error" id="msg"></p>
+  <p id="msg"></p>
 </div>
 
 <script>
-// DEFAULT LOGIN
-let defaultUser = "admin";
-let defaultPass = "Amah123";
+// ---------------------------
+// 🔑 DEFAULT CREDENTIALS
+// ---------------------------
+if (!localStorage.getItem("adminUser")) localStorage.setItem("adminUser", "admin");
+if (!localStorage.getItem("adminPass")) localStorage.setItem("adminPass", "Amah123");
 
-// IF PASSWORD WAS CHANGED → USE THE NEW ONE
-const savedUser = localStorage.getItem("adminUser");
-const savedPass = localStorage.getItem("adminPass");
-
-if (savedUser) defaultUser = savedUser;
-if (savedPass) defaultPass = savedPass;
-
+// ---------------------------
+// 🟢 LOGIN FUNCTION
+// ---------------------------
 function login() {
-  const u = document.getElementById("username").value.trim();
-  const p = document.getElementById("password").value.trim();
+  const u = document.getElementById("username").value;
+  const p = document.getElementById("password").value;
 
-  if (u === defaultUser && p === defaultPass) {
+  const adminU = localStorage.getItem("adminUser");
+  const adminP = localStorage.getItem("adminPass");
+
+  if (u === adminU && p === adminP) {
     localStorage.setItem("isLoggedIn", "true");
     window.location.href = "dashboard.html";
   } else {
-    document.getElementById("msg").textContent = "Incorrect username or password!";
+    document.getElementById("msg").innerText = "❌ Invalid username or password!";
+    document.getElementById("msg").style.color = "red";
   }
+}
+
+// ---------------------------
+// 🔄 AUTO REDIRECT IF LOGGED IN
+// ---------------------------
+if (localStorage.getItem("isLoggedIn") === "true") {
+  window.location.href = "dashboard.html";
 }
 </script>
 
