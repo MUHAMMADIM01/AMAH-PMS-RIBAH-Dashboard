@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Medicine</title>
+</head>
+<body>
+
+<h2>Add New Medicine</h2>
+
+<form id="addForm">
+  <input type="text" id="name" placeholder="Medicine Name" required><br><br>
+  <input type="number" id="price" placeholder="Price" required><br><br>
+  <textarea id="description" placeholder="Description" required></textarea><br><br>
+  <input type="file" id="image" accept="image/*" required><br><br>
+
+  <button type="submit">Add Medicine</button>
+</form>
+
+<script type="module">
+  import { auth } from "./firebase.js";
+  import { addMedicine } from "./medicines.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { onAuthStateChanged } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const storage = getStorage();
+
+  onAuthStateChanged(auth, (user)=>{
+    if (!user) window.location.href = "login.html";
+  });
+
+  document.getElementById("addForm").addEventListener("submit",(e)=>{
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
+    const description = document.getElementById("description").value;
+    const imageFile = document.getElementById("image").files[0];
+
+    const imgRef = ref(storage, "medicines/" + Date.now());
+
+    uploadBytes(imgRef, imageFile)
+    .then(() => getDownloadURL(imgRef))
+    .then((url)=>{
+        addMedicine(name, price, description, url);
+    });
+  });
+</script>
+
+</body>
+</html>
