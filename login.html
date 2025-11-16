@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="auth-card">
+    <h2>Admin Login</h2>
+    <input id="email" type="email" placeholder="admin@example.com">
+    <input id="password" type="password" placeholder="Password">
+    <button id="btnLogin">Login</button>
+    <p class="muted">Don't have admin account? <a href="signup.html">Create one</a></p>
+    <p id="err" class="err"></p>
+  </main>
+
+<script type="module">
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqXjy7ogO8qMCsfuYB61yBpZJpKKKGhqk",
+    authDomain: "amahmedicinestore-be61b.firebaseapp.com",
+    databaseURL: "https://amahmedicinestore-be61b-default-rtdb.firebaseio.com",
+    projectId: "amahmedicinestore-be61b",
+    storageBucket: "amahmedicinestore-be61b.appspot.com",
+    messagingSenderId: "740301709370",
+    appId: "1:740301709370:web:9fd66894daa25bd85b1503"
+  };
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  const btn = document.getElementById('btnLogin'), err = document.getElementById('err');
+  btn.onclick = async () => {
+    err.textContent = '';
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if(!email || !password){ err.textContent="Enter email & password"; return; }
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      // check admin flag in database: /admins/{uid}: true
+      const uid = cred.user.uid;
+      const adminSnap = await get(ref(db, `admins/${uid}`));
+      if(adminSnap.exists() && adminSnap.val() === true){
+        // allowed
+        window.location.href = 'dashboard.html';
+      } else {
+        err.textContent = "Account not registered as admin.";
+        auth.signOut();
+      }
+    } catch(e) {
+      err.textContent = e.message || 'Login failed';
+    }
+  };
+
+  // if already logged in and admin, redirect
+  onAuthStateChanged(auth, async user => {
+    if(user){
+      const adm = await get(ref(db, `admins/${user.uid}`));
+      if(adm.exists() && adm.val() === true) location.href = 'dashboard.html';
+    }
+  });
+</script>
+</body>
+</html>
