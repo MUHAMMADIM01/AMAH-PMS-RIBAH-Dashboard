@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Medicines List</title>
+</head>
+<body>
+
+<h2>All Medicines</h2>
+
+<div id="medList"></div>
+
+<script type="module">
+  import { auth } from "./firebase.js";
+  import { deleteMedicine, loadMedicines } from "./medicines.js";
+  import { onAuthStateChanged } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  onAuthStateChanged(auth, (user)=>{
+    if (!user) window.location.href = "login.html";
+  });
+
+  const container = document.getElementById("medList");
+
+  loadMedicines((data)=>{
+    container.innerHTML = "";
+
+    if (!data) {
+      container.innerHTML = "<p>No medicines added yet.</p>";
+      return;
+    }
+
+    Object.keys(data).forEach(id=>{
+      const item = data[id];
+      const card = document.createElement("div");
+
+      card.innerHTML = `
+        <hr>
+        <strong>${item.name}</strong><br>
+        Price: ${item.price}<br>
+        Description: ${item.description}<br>
+        <img src="${item.image}" width="150"><br><br>
+
+        <button onclick="deleteMed('${id}')">Delete</button>
+        <button onclick="editMed('${id}', '${item.name}', '${item.price}', '${item.description}')">Edit</button>
+        <hr>
+      `;
+
+      container.appendChild(card);
+    });
+  });
+
+  window.deleteMed = function(id) {
+    if (confirm("Are you sure you want to delete?")) {
+      deleteMedicine(id);
+    }
+  }
+
+  window.editMed = function(id, name, price, desc) {
+    const newName = prompt("Edit name:", name);
+    const newPrice = prompt("Edit price:", price);
+    const newDesc = prompt("Edit description:", desc);
+
+    import("./medicines.js").then(module=>{
+        module.editMedicine(id, {
+            name: newName,
+            price: newPrice,
+            description: newDesc
+        });
+    });
+  }
+</script>
+
+</body>
+</html>
