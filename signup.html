@@ -1,61 +1,78 @@
-<!doctype html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Create Admin</title>
-  <link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Signup - Amah Admin</title>
+  <style>
+    body{font-family:Arial;background:#f4f6f8;margin:0;padding:0}
+    .box{max-width:420px;margin:80px auto;background:#fff;padding:24px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+    h2{text-align:center;color:#064b62}
+    input,button{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #ccc}
+    button{background:#0b7a78;color:#fff;border:0;cursor:pointer}
+    .muted{font-size:13px;color:#666;margin-top:8px}
+  </style>
 </head>
 <body>
-  <main class="auth-card">
-    <h2>Create Admin (one-time)</h2>
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password (min 6)">
-    <input id="secret" placeholder="Secret code (to prevent public signup)">
-    <button id="btnSignup">Create Admin</button>
-    <p class="muted">After creating admin, you can delete or secure this file.</p>
-    <p id="err" class="err"></p>
-  </main>
+  <div class="box">
+    <h2>Create Admin Account</h2>
+    <input id="email" placeholder="Admin email" type="email" />
+    <input id="password" placeholder="Password (min 6)" type="password" />
+    <button id="signupBtn">Create Admin</button>
+    <p class="muted">If admin already exists just use login page.</p>
+    <p id="msg" style="color:crimson"></p>
+    <p style="text-align:center;margin-top:12px;"><a href="login.html">Go to Login</a></p>
+  </div>
 
-<script type="module">
-  const firebaseConfig = {
-    apiKey: "AIzaSyBqXjy7ogO8qMCsfuYB61yBpZJpKKKGhqk",
-    authDomain: "amahmedicinestore-be61b.firebaseapp.com",
-    databaseURL: "https://amahmedicinestore-be61b-default-rtdb.firebaseio.com",
-    projectId: "amahmedicinestore-be61b",
-    storageBucket: "amahmedicinestore-be61b.appspot.com",
-    messagingSenderId: "740301709370",
-    appId: "1:740301709370:web:9fd66894daa25bd85b1503"
-  };
+  <!-- Firebase compat scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+  <script>
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getDatabase(app);
+  apiKey: "AIzaSyBqXjy7ogO8qMCsfuYB61yBpZJpKKKGhqk",
+  
+  authDomain: "amahmedicinestore-be61b.firebaseapp.com",
+  
+  databaseURL: "https://amahmedicinestore-be61b-default-rtdb.firebaseio.com",
+  
+  projectId: "amahmedicinestore-be61b",
+  
+  storageBucket: "amahmedicinestore-be61b.firebasestorage.app",
+  
+  messagingSenderId: "740301709370",
+  
+  appId: "1:740301709370:web:9fd66894daa25bd85b1503",
+  
+  measurementId: "G-NV6KNSM3CV"
+};
+    };
+    // ======================================
 
-  const SECRET = 'CREATE-AMAH-ADMIN-2025'; // change this before use!
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
 
-  document.getElementById('btnSignup').onclick = async () => {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const secret = document.getElementById('secret').value.trim();
-    const e = document.getElementById('err'); e.textContent='';
-
-    if(secret !== SECRET){ e.textContent='Wrong secret code.'; return; }
-    if(!email||!password){ e.textContent='Fill fields'; return; }
-
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = cred.user.uid;
-      // mark this user as admin:
-      await set(ref(db, `admins/${uid}`), true);
-      alert('Admin created! Now login via login page.');
-      window.location.href = 'login.html';
-    } catch(err){
-      e.textContent = err.message || 'Signup failed';
-    }
-  }
-</script>
+    document.getElementById('signupBtn').onclick = async () => {
+      document.getElementById('msg').textContent = '';
+      const email = document.getElementById('email').value.trim();
+      const pass = document.getElementById('password').value.trim();
+      if(!email || !pass){ document.getElementById('msg').textContent = 'Complete fields'; return; }
+      try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+        const uid = userCred.user.uid;
+        // mark this user as admin in database
+        await db.ref('admins/' + uid).set({ email, createdAt: Date.now() });
+        alert('Admin created. Now login.');
+        window.location.href = 'login.html';
+      } catch(err) {
+        console.error(err);
+        document.getElementById('msg').textContent = err.message;
+      }
+    };
+  </script>
 </body>
 </html>
