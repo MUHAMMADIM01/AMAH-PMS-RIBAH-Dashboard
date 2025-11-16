@@ -308,6 +308,11 @@ const firebaseConfig = {
       window.location.href = "login.html";
     }
   });
-  </script>in my
+  </script>
+  <script>
+window.onerror = function(message, source, lineno, colno, error) {
+    alert("ERROR: " + message + "\nLine: " + lineno);
+};
+  </script>
 </body>
 </html>
