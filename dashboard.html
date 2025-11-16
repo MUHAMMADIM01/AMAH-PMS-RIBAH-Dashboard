@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Amah Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h2>🔒 Amah Medicine Store — Dashboard</h2>
+    <button id="btnLogout">Logout</button>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Add / Edit Medicine</h3>
+      <input id="medName" placeholder="Name">
+      <input id="medPrice" placeholder="Price">
+      <textarea id="medDesc" placeholder="Description"></textarea>
+      <input type="file" id="medPhoto">
+      <button id="btnAddMed">Add Medicine</button>
+      <input type="hidden" id="editingId">
+    </section>
+
+    <section class="card">
+      <h3>Medicines</h3>
+      <div id="medList"></div>
+    </section>
+
+    <section class="card">
+      <h3>Add Health Tip</h3>
+      <input id="tipInput" placeholder="Tip text">
+      <button id="btnAddTip">Add Tip</button>
+    </section>
+
+    <section class="card">
+      <h3>Health Tips</h3>
+      <div id="tipList"></div>
+    </section>
+
+    <section class="card">
+      <h3>Backup / Restore</h3>
+      <button id="btnExport">Download Backup</button>
+      <input type="file" id="importFile">
+      <button id="btnImport">Import Backup</button>
+    </section>
+  </main>
+
+<script type="module">
+  // Firebase config (paste your own or keep existing)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqXjy7ogO8qMCsfuYB61yBpZJpKKKGhqk",
+    authDomain: "amahmedicinestore-be61b.firebaseapp.com",
+    databaseURL: "https://amahmedicinestore-be61b-default-rtdb.firebaseio.com",
+    projectId: "amahmedicinestore-be61b",
+    storageBucket: "amahmedicinestore-be61b.appspot.com",
+    messagingSenderId: "740301709370",
+    appId: "1:740301709370:web:9fd66894daa25bd85b1503"
+  };
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+  import { getStorage, ref as sref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+  const storage = getStorage(app);
+
+  const btnLogout = document.getElementById('btnLogout');
+  const medName = document.getElementById('medName');
+  const medPrice = document.getElementById('medPrice');
+  const medDesc = document.getElementById('medDesc');
+  const medPhoto = document.getElementById('medPhoto');
+  const btnAddMed = document.getElementById('btnAddMed');
+  const medList = document.getElementById('medList');
+  const editingId = document.getElementById('editingId');
+
+  const tipInput = document.getElementById('tipInput');
+  const btnAddTip = document.getElementById('btnAddTip');
+  const tipList = document.getElementById('tipList');
+
+  const btnExport = document.getElementById('btnExport');
+  const importFile = document.getElementById('importFile');
+  const btnImport = document.getElementById('btnImport');
+
+  // ensure only admin users can access
+  onAuthStateChanged(auth, async user => {
+    if(!user) {
+      location.href = 'login.html';
+      return;
+    }
+    // check admin node
+    const admSnapshot = await get(ref(db, `admins/${user.uid}`));
+    if(!(admSnapshot.exists() && admSnapshot.val() === true)){
+      await signOut(auth);
+      alert('Your account is not an admin.');
+      location.href = 'login.html';
+      return;
+    }
+    // user is admin -> load data
+    listenMeds();
+    listenTips();
+  });
+
+  btnLogout.onclick = async () => {
+    await signOut(auth);
+    location.href = 'login.html';
+  };
+
+  // --- MEDICINES (add/edit/delete) ---
+  btnAddMed.onclick = async () => {
+    const name = medName.value.trim();
+    const price = medPrice.value.trim();
+    const desc = medDesc.value.trim();
+    const file = medPhoto.files[0];
+
+    if(!name || !price) return alert('Provide name and price');
+
+    // if editing
+    const id = editingId.value || null;
+    if(file){
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64 = e.target.result;
+        // upload to storage: path medicines/{timestamp}.txt (we store base64 string)
+        const path = `med_images/${Date.now()}`;
+        const storageRef = sref(storage, path);
+        // upload as data_url
+        await uploadString(storageRef, base64, 'data_url');
+        const url = await getDownloadURL(storageRef);
+        saveMedicine({name, price, description: desc, photoURL: url}, id);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      saveMedicine({name, price, description: desc}, id);
+    }
+  };
+
+  async function saveMedicine(obj, editingIdVal){
+    if(editingIdVal){
+      // update
+      await update(ref(db, `medicines/${editingIdVal}`), obj);
+      alert('Medicine updated');
+      editingId.value='';
+      btnAddMed.textContent='Add Medicine';
+    } else {
+      const newRef = push(ref(db, 'medicines'));
+      await set(newRef, obj);
+      alert('Medicine added');
+    }
+    medName.value=''; medPrice.value=''; medDesc.value=''; medPhoto.value='';
+  }
+
+  function listenMeds(){
+    onValue(ref(db, 'medicines'), snap => {
+      const data = snap.val();
+      medList.innerHTML = '';
+      if(!data){ medList.innerHTML = '<p>No medicines yet</p>'; return; }
+      Object.entries(data).forEach(([key, m])=>{
+        const div = document.createElement('div');
+        div.className='item';
+        div.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px">
+            ${m.photoURL ? `<img src="${m.photoURL}" style="width:90px;height:90px;object-fit:cover">` : ''}
+            <div>
+              <b>${m.name}</b><br>
+              ₦${m.price}<br>
+              <small>${m.description||''}</small>
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <button onclick="editMed('${key}')">Edit</button>
+            <button onclick="deleteMed('${key}')">Delete</button>
+          </div>
+        `;
+        medList.appendChild(div);
+      });
+    });
+  }
+
+  window.editMed = async (key) => {
+    const snap = await get(ref(db, `medicines/${key}`));
+    if(!snap.exists()) return alert('Not found');
+    const m = snap.val();
+    medName.value = m.name || '';
+    medPrice.value = m.price || '';
+    medDesc.value = m.description || '';
+    editingId.value = key;
+    btnAddMed.textContent = 'Save Changes';
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  window.deleteMed = async (key) => {
+    if(!confirm('Delete medicine?')) return;
+    await remove(ref(db, `medicines/${key}`));
+    alert('Deleted');
+  };
+
+  // --- TIPS ---
+  btnAddTip.onclick = async () => {
+    const t = tipInput.value.trim();
+    if(!t) return;
+    const newRef = push(ref(db, 'tips'));
+    await set(newRef, t);
+    tipInput.value='';
+  };
+
+  function listenTips(){
+    onValue(ref(db, 'tips'), snap => {
+      const data = snap.val(); tipList.innerHTML='';
+      if(!data){ tipList.innerHTML = '<p>No tips</p>'; return; }
+      Object.entries(data).forEach(([k,v])=>{
+        const row = document.createElement('div');
+        row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center';
+        const txt = document.createElement('div'); txt.textContent = v;
+        const del = document.createElement('button'); del.textContent='Delete';
+        del.onclick = async ()=> { await remove(ref(db, `tips/${k}`)); };
+        row.appendChild(txt); row.appendChild(del);
+        tipList.appendChild(row);
+      });
+    });
+  }
+
+  // --- Backup / Import ---
+  btnExport.onclick = async () => {
+    const medsSnap = await get(ref(db, 'medicines')); const tipsSnap = await get(ref(db, 'tips'));
+    const data = { medicines: medsSnap.val()||{}, tips: tipsSnap.val()||{} };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='backup_data.json'; a.click();
+  };
+
+  btnImport.onclick = async () => {
+    const f = importFile.files[0];
+    if(!f) return alert('Choose file');
+    const txt = await f.text();
+    const data = JSON.parse(txt);
+    if(data.medicines) {
+      // overwrite medicines
+      await set(ref(db, 'medicines'), data.medicines);
+    }
+    if(data.tips) {
+      await set(ref(db, 'tips'), data.tips);
+    }
+    alert('Imported');
+  };
+
+</script>
+<style>
+  /* simple inline styles to ensure looks OK */
+  body{font-family:Arial,Helvetica,sans-serif}
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#075a4b;color:white}
+  .container{padding:16px}
+  .card{background:#fff;padding:12px;margin-bottom:12px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
+  input,textarea,button{width:100%;padding:8px;margin-top:8px;border-radius:6px;border:1px solid #ddd}
+  button{background:#0b7a63;color:white;border:none;cursor:pointer}
+  #medList .item{background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px}
+</style>
+</body>
+</html>
