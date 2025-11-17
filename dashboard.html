@@ -1,105 +1,108 @@
 <!DOCTYPE html>
 <html lang="ha">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amah Medicine Store — Dashboard</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Amah Medicine Store — Admin Dashboard</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      padding: 20px;
-      background: #f2f7f7;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px #aaa;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #777;
-    }
-
-    button {
-      padding: 10px 18px;
-      background: teal;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-    }
-
-    .deleteBtn {
-      background: red;
-      margin-left: 5px;
-    }
-
-    .editBtn {
-      background: orange;
-      margin-left: 5px;
-    }
-  </style>
+<!-- Simple modern styling -->
+<style>
+  :root{--accent:#0b7a78;--muted:#6b7b7b}
+  body{font-family:Inter,system-ui,Arial;margin:0;background:#f5f8f8;color:#0b2b2a}
+  header{background:linear-gradient(90deg,var(--accent),#0a6f6d);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+  header h1{font-size:18px;margin:0}
+  .wrap{max-width:1100px;margin:20px auto;padding:0 16px;display:grid;grid-template-columns:320px 1fr;gap:18px}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}}
+  .panel{background:#fff;border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+  .btn{background:var(--accent);color:#fff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+  .danger{background:#e04b4b}
+  label{display:block;font-weight:600;margin-top:8px;color:var(--muted)}
+  input[type="text"], textarea, input[type="file"]{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #e6eded}
+  .list-item{display:flex;gap:12px;align-items:center;border-radius:10px;padding:10px;border:1px solid #eef4f3;margin-bottom:10px}
+  .thumb{width:84px;height:70px;object-fit:cover;border-radius:8px;background:#f0f4f4}
+  .small{font-size:13px;color:var(--muted)}
+  .actions{margin-left:auto;display:flex;gap:8px}
+  .toast{position:fixed;right:18px;bottom:18px;background:#0b7a78;color:#fff;padding:10px 14px;border-radius:10px;display:none;box-shadow:0 8px 24px rgba(11,122,120,.18)}
+</style>
 </head>
-
 <body>
 
-<h2>Amah Medicine Store — Dashboard</h2>
-<button id="logoutBtn" style="float:right; background:red;">Logout</button>
-<br><br>
+<header>
+  <h1>Amah Medicine Store — Admin Dashboard</h1>
+  <div>
+    <button id="logoutBtn" class="btn" style="background:#fff;color:var(--accent)">Logout</button>
+  </div>
+</header>
 
-<!-- ADD MEDICINE -->
-<div class="card">
-  <h3>Add Medicine</h3>
-  <input id="mName" placeholder="Medicine Name">
-  <input id="mPrice" placeholder="Price">
-  <textarea id="mDesc" placeholder="Description"></textarea>
-  <input id="mImg" type="file">
-  <button onclick="addMedicine()">Add Medicine</button>
+<div class="wrap">
+  <!-- LEFT: Admin / Password / Backup -->
+  <aside>
+    <div class="panel">
+      <h3>Admin</h3>
+      <p class="small" id="adminEmail">—</p>
+
+      <label>Change password</label>
+      <input id="currentPass" type="password" placeholder="Current password">
+      <input id="newPass" type="password" placeholder="New password" style="margin-top:8px">
+      <button id="changePassBtn" class="btn" style="width:100%;margin-top:10px">Change Password</button>
+
+      <hr style="margin:12px 0;border:none;border-top:1px solid #eef6f6">
+
+      <label>Backup / Restore</label>
+      <button id="downloadBackup" class="btn" style="width:100%">Download Backup</button>
+      <input id="restoreFile" type="file" accept=".json" style="margin-top:8px">
+      <button id="restoreBtn" class="btn" style="width:100%;margin-top:8px;background:#ff7a4d">Restore Backup</button>
+    </div>
+  </aside>
+
+  <!-- RIGHT: Main -->
+  <main>
+    <!-- Add medicine -->
+    <div class="panel" style="margin-bottom:12px">
+      <h3>Add Medicine</h3>
+      <label>Name</label>
+      <input id="medName" type="text" placeholder="Medicine name">
+      <label>Description</label>
+      <textarea id="medDesc" rows="3" placeholder="Short description"></textarea>
+      <label>Image</label>
+      <input id="medPhoto" type="file" accept="image/*">
+      <button id="addMedBtn" class="btn" style="margin-top:10px">Add Medicine</button>
+    </div>
+
+    <!-- Medicines list -->
+    <div class="panel" style="margin-bottom:12px">
+      <h3>Medicines</h3>
+      <div id="medList">Loading...</div>
+    </div>
+
+    <!-- Add tip -->
+    <div class="panel" style="margin-bottom:12px">
+      <h3>Add Health Tip</h3>
+      <label>Title</label>
+      <input id="tipTitle" type="text" placeholder="Tip title">
+      <label>Description</label>
+      <textarea id="tipDesc" rows="2" placeholder="Tip details"></textarea>
+      <button id="addTipBtn" class="btn" style="margin-top:8px">Add Tip</button>
+    </div>
+
+    <!-- Tips list -->
+    <div class="panel">
+      <h3>Health Tips</h3>
+      <div id="tipsList">Loading...</div>
+    </div>
+  </main>
 </div>
 
-<!-- SHOW MEDICINES -->
-<div class="card">
-  <h3>All Medicines</h3>
-  <div id="medicineList"></div>
-</div>
+<div id="toast" class="toast"></div>
 
-<!-- ADD TIPS -->
-<div class="card">
-  <h3>Add Health Tip</h3>
-  <input id="tTitle" placeholder="Title">
-  <textarea id="tDesc" placeholder="Description"></textarea>
-  <button onclick="addTip()">Add Tip</button>
-</div>
-
-<!-- SHOW TIPS -->
-<div class="card">
-  <h3>All Tips</h3>
-  <div id="tipsList"></div>
-</div>
-
-
+<!-- FIREBASE MODULAR (v10) -->
 <script type="module">
-
-  /* FIREBASE IMPORTS */
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getDatabase, ref, push, set, onValue, remove, update }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  import { getStorage, ref as sRef, uploadBytes, getDownloadURL }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { getAuth, onAuthStateChanged, signOut, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getDatabase, ref, push, set, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-
-  /* FIREBASE CONFIG */
+  // --------- 1) FIREBASE CONFIG: paste your config here (you already shared it)
   const firebaseConfig = {
     apiKey: "AIzaSyBqXjy7ogO8qMCsfuYB61yBpZJpKKKGhqk",
     authDomain: "amahmedicinestore-be61b.firebaseapp.com",
@@ -111,167 +114,198 @@
     measurementId: "G-NV6KNSM3CV"
   };
 
-
-  /* INITIALISE */
+  // --------- 2) INIT
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
   const storage = getStorage(app);
 
+  // toast helper
+  const toastEl = document.getElementById('toast');
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.style.display = 'block';
+    setTimeout(()=> toastEl.style.display = 'none', 3000);
+  }
 
-  /* PROTECT PAGE */
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "login.html";
+  // PROTECT: require login + admin flag in DB
+  onAuthStateChanged(auth, async user => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    // check admin entry
+    try{
+      const adminSnap = await get(ref(db, 'admins/' + user.uid));
+      if (!adminSnap.exists()) {
+        await signOut(auth);
+        alert('Your account is not an admin. Ask owner to add you under /admins/<uid> = true');
+        window.location.href = 'login.html';
+        return;
+      }
+      document.getElementById('adminEmail').textContent = user.email || user.uid;
+      loadAllMedicines();
+      loadAllTips();
+    } catch(err){
+      console.error(err); alert('Error checking admin: '+ err.message);
     }
   });
 
+  // LOGOUT
+  document.getElementById('logoutBtn').onclick = ()=> signOut(auth).then(()=>{ window.location.href='login.html' });
 
-  /* LOGOUT */
-  logoutBtn.onclick = () => signOut(auth);
-
-
-
-  /* ADD MEDICINE */
-  window.addMedicine = async function () {
-
-    let name = mName.value.trim();
-    let price = mPrice.value.trim();
-    let desc = mDesc.value.trim();
-    let file = mImg.files[0];
-
-    if (!name || !price || !desc || !file) {
-      alert("Fill all fields");
-      return;
+  // CHANGE PASSWORD (reauth)
+  document.getElementById('changePassBtn').onclick = async () => {
+    const current = document.getElementById('currentPass').value.trim();
+    const next = document.getElementById('newPass').value.trim();
+    if(!current || !next){ toast('Fill both fields'); return; }
+    const user = auth.currentUser;
+    if(!user){ toast('Not logged in'); return; }
+    try{
+      const cred = EmailAuthProvider.credential(user.email, current);
+      await reauthenticateWithCredential(user, cred);
+      await updatePassword(user, next);
+      document.getElementById('currentPass').value=''; document.getElementById('newPass').value='';
+      toast('Password changed');
+    }catch(err){
+      console.error(err); toast('Change failed: '+ (err.message || err.code));
     }
-
-    // Upload Image
-    const imgRef = sRef(storage, "medicines/" + Date.now() + "-" + file.name);
-    await uploadBytes(imgRef, file);
-    let imgURL = await getDownloadURL(imgRef);
-
-    // Save to DB
-    let newRef = push(ref(db, "medicines"));
-    await set(newRef, {
-      name, price, desc, img: imgURL
-    });
-
-    alert("Medicine Added!");
   };
 
-
-
-  /* LOAD MEDICINES */
-  function loadMedicines() {
-    onValue(ref(db, "medicines"), snapshot => {
-      let data = snapshot.val();
-      let html = "";
-
-      for (let id in data) {
-        html += `
-          <div style="margin-bottom:10px; border-bottom:1px solid #ccc;">
-            <b>${data[id].name}</b> — ₦${data[id].price} <br>
-            <img src="${data[id].img}" width="100"><br>
-            ${data[id].desc}<br>
-
-            <button class="editBtn" onclick="editMedicine('${id}')">Edit</button>
-            <button class="deleteBtn" onclick="deleteMedicine('${id}')">Delete</button>
-          </div>
-        `;
+  // ---- MEDICINES CRUD (no price) ----
+  document.getElementById('addMedBtn').onclick = async () => {
+    const name = document.getElementById('medName').value.trim();
+    const desc = document.getElementById('medDesc').value.trim();
+    const file = document.getElementById('medPhoto').files[0];
+    if(!name || !desc){ toast('Name & description required'); return; }
+    try{
+      let photoURL = '';
+      if(file){
+        const path = 'medicines/' + Date.now() + '_' + file.name;
+        const snap = await uploadBytes(sRef(storage, path), file);
+        photoURL = await getDownloadURL(snap.ref);
       }
+      const newKey = push(ref(db, 'medicines')).key;
+      await set(ref(db, 'medicines/' + newKey), { id: newKey, name, description: desc, image: photoURL, createdAt: Date.now() });
+      document.getElementById('medName').value=''; document.getElementById('medDesc').value=''; document.getElementById('medPhoto').value='';
+      toast('Medicine added');
+      // lists update automatically by onValue listeners
+    }catch(err){ console.error(err); toast('Add failed: '+ err.message); }
+  };
 
-      medicineList.innerHTML = html;
+  async function loadAllMedicines(){
+    // realtime listener
+    onValue(ref(db, 'medicines'), snapshot => {
+      const list = document.getElementById('medList');
+      const data = snapshot.val();
+      if(!data){ list.innerHTML = '<div class="small">No medicines yet</div>'; return; }
+      let html = '';
+      // newest first
+      const keys = Object.keys(data).sort((a,b)=> (data[b].createdAt||0) - (data[a].createdAt||0));
+      for(const k of keys){
+        const m = data[k];
+        html += `<div class="list-item">
+            <img class="thumb" src="${m.image||''}" onerror="this.style.display='none'">
+            <div>
+              <b>${escapeHtml(m.name)}</b><div class="small">${escapeHtml(m.description||'')}</div>
+            </div>
+            <div class="actions">
+              <button class="btn" onclick='editMed("${m.id}")'>Edit</button>
+              <button class="btn danger" onclick='deleteMed("${m.id}")'>Delete</button>
+            </div>
+          </div>`;
+      }
+      list.innerHTML = html;
     });
   }
-  loadMedicines();
 
-
-
-  /* DELETE MEDICINE */
-  window.deleteMedicine = function (id) {
-    if (confirm("Delete this medicine?")) {
-      remove(ref(db, "medicines/" + id));
-    }
+  window.deleteMed = async (id) => {
+    if(!confirm('Delete this medicine?')) return;
+    try{ await remove(ref(db, 'medicines/' + id)); toast('Deleted'); }catch(err){ console.error(err); toast('Delete failed'); }
   };
 
-
-  /* EDIT MEDICINE */
-  window.editMedicine = function (id) {
-
-    let newName = prompt("New name:");
-    let newPrice = prompt("New price:");
-    let newDesc = prompt("New description:");
-
-    update(ref(db, "medicines/" + id), {
-      name: newName,
-      price: newPrice,
-      desc: newDesc
-    });
+  window.editMed = async (id) => {
+    const snap = await get(ref(db, 'medicines/' + id));
+    if(!snap.exists()){ toast('Not found'); return; }
+    const m = snap.val();
+    const newName = prompt('Name', m.name);
+    if(newName === null) return;
+    const newDesc = prompt('Description', m.description || '');
+    if(newDesc === null) return;
+    try{ await update(ref(db, 'medicines/' + id), { name: newName, description: newDesc }); toast('Updated'); }catch(err){ console.error(err); toast('Update failed'); }
   };
 
-
-
-  /* ADD TIP */
-  window.addTip = function () {
-    let title = tTitle.value.trim();
-    let desc  = tDesc.value.trim();
-
-    if (!title || !desc) {
-      alert("Complete fields");
-      return;
-    }
-
-    let newRef = push(ref(db, "tips"));
-    set(newRef, { title, desc });
-
-    alert("Tip Added!");
+  // ---- TIPS CRUD ----
+  document.getElementById('addTipBtn').onclick = async () => {
+    const title = document.getElementById('tipTitle').value.trim();
+    const desc = document.getElementById('tipDesc').value.trim();
+    if(!title || !desc){ toast('Title & description required'); return; }
+    try{
+      const key = push(ref(db, 'tips')).key;
+      await set(ref(db,'tips/'+key), { id:key, title, description: desc, createdAt: Date.now() });
+      document.getElementById('tipTitle').value=''; document.getElementById('tipDesc').value='';
+      toast('Tip added');
+    }catch(err){ console.error(err); toast('Add tip failed'); }
   };
 
-
-
-  /* LOAD TIPS */
-  function loadTips() {
-    onValue(ref(db, "tips"), snapshot => {
-      let data = snapshot.val();
-      let html = "";
-
-      for (let id in data) {
-        html += `
-          <div style="margin-bottom:10px; border-bottom:1px solid #ccc;">
-            <b>${data[id].title}</b><br>
-            ${data[id].desc}<br>
-
-            <button class="editBtn" onclick="editTip('${id}')">Edit</button>
-            <button class="deleteBtn" onclick="deleteTip('${id}')">Delete</button>
-          </div>
-        `;
+  async function loadAllTips(){
+    onValue(ref(db, 'tips'), snapshot => {
+      const list = document.getElementById('tipsList');
+      const data = snapshot.val();
+      if(!data){ list.innerHTML = '<div class="small">No tips yet</div>'; return; }
+      let html = '';
+      const keys = Object.keys(data).sort((a,b)=> (data[b].createdAt||0) - (data[a].createdAt||0));
+      for(const k of keys){
+        const t = data[k];
+        html += `<div class="list-item">
+            <div style="flex:1">
+              <b>${escapeHtml(t.title)}</b>
+              <div class="small">${escapeHtml(t.description||'')}</div>
+            </div>
+            <div class="actions">
+              <button class="btn" onclick='editTip("${t.id}")'>Edit</button>
+              <button class="btn danger" onclick='deleteTip("${t.id}")'>Delete</button>
+            </div>
+          </div>`;
       }
-
-      tipsList.innerHTML = html;
+      list.innerHTML = html;
     });
   }
-  loadTips();
 
-
-
-  /* DELETE TIP */
-  window.deleteTip = function (id) {
-    if (confirm("Delete this tip?")) {
-      remove(ref(db, "tips/" + id));
-    }
+  window.deleteTip = async (id) => {
+    if(!confirm('Delete tip?')) return;
+    try{ await remove(ref(db, 'tips/' + id)); toast('Deleted'); }catch(err){ console.error(err); toast('Delete failed'); }
   };
 
-
-  /* EDIT TIP */
-  window.editTip = function (id) {
-    let newTitle = prompt("New title:");
-    let newDesc = prompt("New description:");
-
-    update(ref(db, "tips/" + id), {
-      title: newTitle,
-      desc: newDesc
-    });
+  window.editTip = async (id) => {
+    const snap = await get(ref(db, 'tips/' + id));
+    if(!snap.exists()){ toast('Not found'); return; }
+    const t = snap.val();
+    const newTitle = prompt('Title', t.title);
+    if(newTitle === null) return;
+    const newDesc = prompt('Description', t.description || '');
+    if(newDesc === null) return;
+    try{ await update(ref(db,'tips/'+id), { title:newTitle, description:newDesc }); toast('Updated'); }catch(err){ console.error(err); toast('Update failed'); }
   };
+
+  // BACKUP / RESTORE
+  document.getElementById('downloadBackup').onclick = async () => {
+    try{
+      const medsSnap = await get(ref(db,'medicines')); const tipsSnap = await get(ref(db,'tips'));
+      const data = { medicines: medsSnap.val()||{}, tips: tipsSnap.val()||{} };
+      const blob = new Blob([JSON.stringify(data)], {type:'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup_data.json'; a.click();
+    }catch(err){ console.error(err); toast('Backup failed'); }
+  };
+
+  document.getElementById('restoreBtn').onclick = async () => {
+    const f = document.getElementById('restoreFile').files[0]; if(!f){ toast('Choose file'); return; }
+    try{
+      const txt = await f.text(); const data = JSON.parse(txt);
+      if(data.medicines) await set(ref(db,'medicines'), data.medicines);
+      if(data.tips) await set(ref(db,'tips'), data.tips);
+      toast('Restored'); // listeners will refresh UI
+    }catch(err){ console.error(err); toast('Restore failed'); }
+  };
+
+  // helper
+  function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 </script>
 
