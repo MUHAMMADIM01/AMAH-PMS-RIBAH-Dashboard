@@ -86,9 +86,10 @@
   <div id="tipsList"></div>
 </div>
 
+
 <script type="module">
-  
-  /* 1. IMPORT FIREBASE FILES */
+
+  /* FIREBASE IMPORTS */
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -98,7 +99,7 @@
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 
-  /* 2. FIREBASE CONFIG (DAKAI NAWA KUKA BA NI) */
+  /* FIREBASE CONFIG */
   const firebaseConfig = {
     apiKey: "AIzaSyBqXjy7ogO8qMCsfuYB61yBpZJpKKKGhqk",
     authDomain: "amahmedicinestore-be61b.firebaseapp.com",
@@ -111,14 +112,14 @@
   };
 
 
-  /* 3. INITIALIZE FIREBASE */
+  /* INITIALISE */
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
   const storage = getStorage(app);
 
 
-  /* 4. PROTECT PAGE — SAI AN YI LOGIN */
+  /* PROTECT PAGE */
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       window.location.href = "login.html";
@@ -126,13 +127,12 @@
   });
 
 
-  /* 5. LOGOUT */
-  logoutBtn.onclick = () => {
-    signOut(auth);
-  };
+  /* LOGOUT */
+  logoutBtn.onclick = () => signOut(auth);
 
 
-  /* 6. ADD MEDICINE */
+
+  /* ADD MEDICINE */
   window.addMedicine = async function () {
 
     let name = mName.value.trim();
@@ -141,12 +141,12 @@
     let file = mImg.files[0];
 
     if (!name || !price || !desc || !file) {
-      alert("Please fill all fields");
+      alert("Fill all fields");
       return;
     }
 
     // Upload Image
-    const imgRef = sRef(storage, "medicines/" + file.name);
+    const imgRef = sRef(storage, "medicines/" + Date.now() + "-" + file.name);
     await uploadBytes(imgRef, file);
     let imgURL = await getDownloadURL(imgRef);
 
@@ -156,11 +156,12 @@
       name, price, desc, img: imgURL
     });
 
-    alert("Medicine Added Successfully!");
+    alert("Medicine Added!");
   };
 
 
-  /* 7. LOAD MEDICINES */
+
+  /* LOAD MEDICINES */
   function loadMedicines() {
     onValue(ref(db, "medicines"), snapshot => {
       let data = snapshot.val();
@@ -185,16 +186,16 @@
   loadMedicines();
 
 
-  /* 8. DELETE MEDICINE */
+
+  /* DELETE MEDICINE */
   window.deleteMedicine = function (id) {
     if (confirm("Delete this medicine?")) {
       remove(ref(db, "medicines/" + id));
-      alert("Deleted!");
     }
   };
 
 
-  /* 9. EDIT MEDICINE */
+  /* EDIT MEDICINE */
   window.editMedicine = function (id) {
 
     let newName = prompt("New name:");
@@ -206,19 +207,17 @@
       price: newPrice,
       desc: newDesc
     });
-
-    alert("Updated!");
   };
 
 
-  /* 10. ADD TIP */
-  window.addTip = function () {
 
+  /* ADD TIP */
+  window.addTip = function () {
     let title = tTitle.value.trim();
     let desc  = tDesc.value.trim();
 
     if (!title || !desc) {
-      alert("Complete all fields");
+      alert("Complete fields");
       return;
     }
 
@@ -229,10 +228,10 @@
   };
 
 
-  /* 11. LOAD TIPS */
+
+  /* LOAD TIPS */
   function loadTips() {
     onValue(ref(db, "tips"), snapshot => {
-
       let data = snapshot.val();
       let html = "";
 
@@ -254,18 +253,17 @@
   loadTips();
 
 
-  /* 12. DELETE TIP */
+
+  /* DELETE TIP */
   window.deleteTip = function (id) {
     if (confirm("Delete this tip?")) {
       remove(ref(db, "tips/" + id));
-      alert("Deleted!");
     }
   };
 
 
-  /* 13. EDIT TIP */
+  /* EDIT TIP */
   window.editTip = function (id) {
-
     let newTitle = prompt("New title:");
     let newDesc = prompt("New description:");
 
@@ -273,8 +271,6 @@
       title: newTitle,
       desc: newDesc
     });
-
-    alert("Updated!");
   };
 
 </script>
