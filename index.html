@@ -1,156 +1,89 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Amah Medicine Store Ribah</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <title>Amah Medicine – Login</title>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .box {
+      background: white;
+      padding: 25px;
+      width: 320px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px #ccc;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background: #0066ff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #004ce6;
+    }
+  </style>
 </head>
+
 <body>
-  <header class="topbar">
-    <div class="logo-row">
-      <img src="assets/logo.png" alt="Amah Logo" class="logo" onerror="this.style.display='none'">
-      <h1>💉Amah Medicine Store Ribah💊</h1>
-    </div>
-    <nav class="nav">
-      <a href="index.html">Home</a>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#health">Health Tips</a>
-      <a href="login.html">Admin</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+  <div class="box">
+    <h3>Admin Login</h3>
 
-  <main class="container">
-    <section id="hero" class="card">
-      <h2>Welcome to Amah Medicine Store Ribah</h2>
-      <p class="muted"><i>Health & Wellness at Your Doorstep — Ribah, Kebbi State.</i></p>
-    </section>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
 
-    <section id="about" class="card">
-      <h2>About Us</h2>
-      <p>A licensed pharmaceutical store located in Ribah, Kebbi State, Nigeria. We provide trusted medicines, personal care products, and services with integrity and care.</p>
-    </section>
+    <button onclick="login()">Login</button>
 
-    <section id="services" class="card">
-      <h2>Our Services</h2>
-      <ul>
-        <li>💊 Prescription & Over-the-Counter Medicines</li>
-        <li>💅 Health & Beauty Products</li>
-        <li>🩺 Medical Consultation</li>
-        <li>🚚 Home Delivery Services</li>
-        <li>🧠 Health Tips</li>
-      </ul>
-    </section>
+    <p id="msg" style="color:red;"></p>
+  </div>
 
-    <section id="meds" class="card">
-      <h2>Available Medicines</h2>
-      <div id="medList" class="grid"></div>
-    </section>
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAO1tCcG8_RpKtze1d1d-lpwht5dB9lDeI",
+    authDomain: "amah-medicine-store.firebaseapp.com",
+    projectId: "amah-medicine-store",
+  };
 
-    <section id="health" class="card">
-      <h2>Health Tips</h2>
-      <div id="tipBox" class="tips"></div>
-    </section>
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    <section id="contact" class="card">
-      <h2>Contact Us</h2>
-      <p>📍 Opposite Nemi Naka Ribah, Danko/Wasagu LGA, Kebbi State, Nigeria</p>
-      <p>💬 <a href="https://wa.me/2348031577957" target="_blank">WhatsApp</a> • 📞 <a href="tel:+2347088900047">Call</a></p>
-    </section>
-  </main>
+  function login() {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
 
-  <footer class="footer">
-    © 2025 Amah Medicine Store. All rights reserved.
-  </footer>
+      auth.signInWithEmailAndPassword(email, pass)
+        .then(() => {
+            window.location.href = "dashboard.html"; 
+        })
+        .catch((error) => {
+            document.getElementById("msg").innerText = error.message;
+        });
+  }
+</script>
 
-  <!-- Firebase v9 modular via CDN (we'll use inside module script) -->
-  <script type="module">
-    // ---- PASTE YOUR FIREBASE CONFIG HERE or use the one below ----
-    const firebaseConfig = {
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-
-  apiKey: "AIzaSyBqXjy7ogO8qMCsfuYB61yBpZJpKKKGhqk",
-  
-  authDomain: "amahmedicinestore-be61b.firebaseapp.com",
-  
-  databaseURL: "https://amahmedicinestore-be61b-default-rtdb.firebaseio.com",
-  
-  projectId: "amahmedicinestore-be61b",
-  
-  storageBucket: "amahmedicinestore-be61b.firebasestorage.app",
-  
-  messagingSenderId: "740301709370",
-  
-  appId: "1:740301709370:web:9fd66894daa25bd85b1503",
-  
-  measurementId: "G-NV6KNSM3CV"
-};
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-    import { getStorage, ref as sref, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const storage = getStorage(app);
-
-    // Render medicines (list stored at /medicines)
-    const medListEl = document.getElementById('medList');
-    function renderMeds(data){
-      medListEl.innerHTML = '';
-      if(!data) { medListEl.innerHTML = '<p>No medicines yet.</p>'; return; }
-      Object.entries(data).forEach(([id, m])=>{
-        const card = document.createElement('div');
-        card.className = 'card-item';
-        const imgUrl = m.photoURL || '';
-        const imgTag = imgUrl ? `<img src="${imgUrl}" alt="${m.name}">` : '';
-        card.innerHTML = `
-          ${imgTag}
-          <h3>${m.name}</h3>
-          <p class="price">₦${m.price}</p>
-          <p>${m.description || ''}</p>
-        `;
-        medListEl.appendChild(card);
-      });
-    }
-
-    // Subscribe to /medicines
-    const medsRef = ref(db, 'medicines');
-    onValue(medsRef, snapshot => {
-      renderMeds(snapshot.val());
-    });
-
-    // Tips rotator
-    const tipsRef = ref(db, 'tips');
-    const tipBox = document.getElementById('tipBox');
-    let tipsArr = [];
-    let tipIndex = 0;
-    function rotateTips() {
-      if(!tipsArr.length){ tipBox.textContent = 'No tips yet.'; return; }
-      tipBox.style.opacity = 0;
-      setTimeout(()=>{
-        tipBox.innerHTML = `<i>💡 ${tipsArr[tipIndex]}</i>`;
-        tipBox.style.opacity = 1;
-        tipIndex = (tipIndex + 1) % tipsArr.length;
-      }, 250);
-    }
-    onValue(tipsRef, snap => {
-      const v = snap.val() || {};
-      tipsArr = Object.values(v).map(x => typeof x === 'string' ? x : x.text).filter(Boolean);
-      tipIndex = 0;
-      rotateTips();
-      setInterval(rotateTips, 4000);
-    });
-
-    // Preload images (if stored in storage, your dashboard will save photoURL)
-    // done by referring to photoURL already in DB
-
-  </script>
 </body>
 </html>
-
-
-
