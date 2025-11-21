@@ -1,34 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Amah Medicine Store</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
+<h2>Available Medicines</h2>
+<div id="medList" class="grid"></div>
 
-  <header>
-    <h2>Amah Medicine Store</h2>
-    <a href="login.html" class="admin-btn">Admin Login</a>
-  </header>
-
-  <section class="upload-section">
-    <h3>Add New Medicine</h3>
-
-    <form id="addForm">
-      <input type="text" id="name" placeholder="Medicine Name" required />
-      <input type="number" id="price" placeholder="Price" required />
-      <input type="file" id="photo" accept="image/*" required />
-      <button type="submit">Upload</button>
-    </form>
-  </section>
-
-  <h3 style="text-align:center">Available Medicines</h3>
-
-  <div id="medicineList" class="products"></div>
-
-  <script src="firebase.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+<script type="module" src="medicines.js"></script>
