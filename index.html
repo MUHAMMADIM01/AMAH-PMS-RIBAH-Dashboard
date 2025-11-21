@@ -1,169 +1,34 @@
 <!DOCTYPE html>
-<html lang="ha">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amah Medicine Store Ribah</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Amah Medicine Store</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .medicine-card {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 10px;
-      margin: 10px;
-      text-align: center;
-    }
-    .medicine-card img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .medicine-card h3 {
-      margin: 5px 0;
-      color: #00695c;
-    }
-    .medicine-card p {
-      margin: 4px 0;
-    }
-    .tips-box {
-      background: #f0fdfa;
-      border-radius: 10px;
-      padding: 10px;
-      font-style: italic;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-  </style>
 </head>
 <body>
-  <header class="site-header">
-    <div>
-      <img src="images/file_00000000659461f5ae136185b767950a.png" alt="Amah Medicine Store Logo" class="site-logo">
-      <div class="site-title">
-        <h1>💉Amah Medicine Store Ribah💊</h1>
-        <p class="tagline"><i>Health & Wellness at Your Doorstep</i></p>
-      </div>
-    </div>
-    >script>
-    const firebaseConfig = {
-  apiKey: "AIzaSyC6Y6IHVFWQ3MoufpQpPod-a2tiE2mm3fU",
-  authDomain: "amah-store.firebaseapp.com",
-  databaseURL: "https://amah-store-default-rtdb.firebaseio.com",
-  projectId: "amah-store",
-  storageBucket: "amah-store.firebasestorage.app",
-  messagingSenderId: "673483173814",
-  appId: "1:673483173814:web:e4fc948ed749bb31c09b17"
-};
-  </script>
 
-    <nav class="main-nav">
-      <a href="index.html">Home</a>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#health">Health Tips</a>
-      <a href="admin/dashboard.html">Admin</a>
-      <a href="#contact">Contact</a>
-    </nav>
+  <header>
+    <h2>Amah Medicine Store</h2>
+    <a href="login.html" class="admin-btn">Admin Login</a>
   </header>
 
-  <main>
-    <section id="hero" class="hero-card center">
-      <h2>Welcome to Amah Medicine Store</h2>
-      <p>Your trusted health partner in Ribah, Kebbi State.</p>
-      <a class="btn" href="#contact">Visit Our Store</a>
-    </section>
+  <section class="upload-section">
+    <h3>Add New Medicine</h3>
 
-    <section id="services" class="content center">
-      <h2>Our Services</h2>
-      <ul class="services-list">
-        <li>💊 Prescription & Over-the-Counter Medicines</li>
-        <li>💅 Health & Beauty Products</li>
-        <li>🩺 Medical Consultation</li>
-        <li>🚚 Home Delivery Services</li>
-        <li>🧠 Health Tips</li>
-      </ul>
-    </section>
+    <form id="addForm">
+      <input type="text" id="name" placeholder="Medicine Name" required />
+      <input type="number" id="price" placeholder="Price" required />
+      <input type="file" id="photo" accept="image/*" required />
+      <button type="submit">Upload</button>
+    </form>
+  </section>
 
-    <!-- 💊 MEDICINES SECTION -->
-    <section id="medicineSection" class="content center">
-      <h2>Available Medicines / Products</h2>
-      <div id="medicineList"><p>Loading medicines...</p></div>
-    </section>
+  <h3 style="text-align:center">Available Medicines</h3>
 
-    <!-- 💡 HEALTH TIPS SECTION -->
-    <section id="health" class="content center">
-      <h2>Health Tips</h2>
-      <div id="tipsList" class="tips-box"><p>Loading tips...</p></div>
-    </section>
+  <div id="medicineList" class="products"></div>
 
-    <section id="contact" class="contact-section center">
-      <h2>Contact Us</h2>
-      <p>📍 Opposite Nemi Naka Ribah, Danko/Wasagu LGA, Kebbi State, Nigeria</p>
-
-      <div class="contact-buttons">
-        <a class="btn whatsapp" href="https://wa.me/2348031577957" target="_blank" rel="noopener">💬 WhatsApp</a>
-        <a class="btn call" href="tel:+2347088900047">📞 Call Us</a>
-        <a class="btn email" href="mailto:amahmedicinestoreribah@gmail.com">✉️ Email</a>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <p>© 2025 Amah Medicine Store. All rights reserved.</p>
-  </footer>
-
-  <script>
-    // 🩺 Render Medicines
-    function renderMedicines() {
-      const meds = JSON.parse(localStorage.getItem("amah_medicines")) || [];
-      const list = document.getElementById("medicineList");
-      if (meds.length === 0) {
-        list.innerHTML = "<p>No medicines available yet.</p>";
-        return;
-      }
-
-      list.innerHTML = meds.map(m => `
-        <div class="medicine-card">
-          <img src="${m.photo || 'https://via.placeholder.com/120'}" alt="${m.name}">
-          <h3>${m.name}</h3>
-          <p><strong>₦${m.price}</strong></p>
-          <p>${m.description}</p>
-          <button>🛒 Add to Cart</button>
-        </div>
-      `).join("");
-    }
-
-    // 💡 Render Health Tips (Auto Rotate)
-    function renderTips() {
-      const tips = JSON.parse(localStorage.getItem("amah_tips")) || [];
-      const tipsList = document.getElementById("tipsList");
-      if (tips.length === 0) {
-        tipsList.innerHTML = "<p><em>No health tips yet.</em></p>";
-        return;
-      }
-
-      let i = 0;
-      function showNextTip() {
-        const tip = tips[i];
-        tipsList.innerHTML = `<p>💡 <i>${tip}</i></p>`;
-        i = (i + 1) % tips.length;
-      }
-
-      showNextTip();
-      setInterval(showNextTip, 4000);
-    }
-
-    window.addEventListener("storage", () => {
-      renderMedicines();
-      renderTips();
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      renderMedicines();
-      renderTips();
-    });
-  </script>
-  
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="medicines.js"></script>
 </body>
 </html>
