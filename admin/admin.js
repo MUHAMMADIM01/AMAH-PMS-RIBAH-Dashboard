@@ -1,46 +1,53 @@
-import { app, db } from "../firebase.js";
-import {
-  collection,
-  addDoc
+// ============================
+//  IMPORT FIREBASE
+// ============================
+import { db } from "../firebase.js";
+import { 
+  collection, 
+  addDoc 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+// ============================
+//  GET FORM ELEMENTS
+// ============================
+const form = document.getElementById("addMedicineForm");
+const nameInput = document.getElementById("medicineName");
 
-const storage = getStorage(app);
+// Check if form exists
+if (!form) {
+  console.log("Form not found on this page.");
+}
 
-document.getElementById("addForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+// ============================
+//  SUBMIT FORM
+// ============================
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const file = document.getElementById("photo").files[0];
+    const name = nameInput.value.trim();
 
-  if (!file) {
-    alert("Please choose an image");
-    return;
-  }
+    // Check empty input
+    if (name === "") {
+      alert("Please enter a medicine name");
+      return;
+    }
 
-  // 1️⃣ Upload Image to Firebase Storage
-  const path = `medicines/${Date.now()}_${file.name}`;
-  const storageRef = ref(storage, path);
+    console.log("Firebase DB:", db);  // Check DB
 
-  await uploadBytes(storageRef, file);
+    // Firestore collection reference
+    const colRef = collection(db, "medicines");
 
-  const downloadURL = await getDownloadURL(storageRef);
-
-  // 2️⃣ Save record to Firestore
-  await addDoc(collection(db, "medicines"), {
-    name: name,
-    description: description,
-    photo: downloadURL,
-    createdAt: Date.now()
+    // Add to Firestore
+    addDoc(colRef, { name })
+      .then(() => {
+        console.log("Document added successfully!");
+        alert("Medicine Added Successfully!");
+        form.reset();
+      })
+      .catch((error) => {
+        console.log("Error adding document:", error);
+        alert("Error: " + error.message);
+      });
   });
-
-  alert("Medicine uploaded successfully!");
-  document.getElementById("addForm").reset();
-});
+}
