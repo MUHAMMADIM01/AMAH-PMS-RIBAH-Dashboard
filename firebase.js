@@ -5,7 +5,6 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebas
 const firebaseConfig = {
   apiKey: "AIzaSyC6Y6IHVFWQ3MoufpQpPod-a2tiE2mm3fU",
   authDomain: "amah-store.firebaseapp.com",
-  databaseURL: "https://amah-store-default-rtdb.firebaseio.com",
   projectId: "amah-store",
   storageBucket: "amah-store.firebasestorage.app",
   messagingSenderId: "673483173814",
