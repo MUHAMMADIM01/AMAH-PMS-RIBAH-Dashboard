@@ -1,48 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Admin Login</title>
 </head>
 <body>
 
 <h2>Admin Login</h2>
 
 <form id="loginForm">
-  <input type="email" id="email" placeholder="Email" required><br>
-  <input type="password" id="password" placeholder="Password" required><br>
-  <button type="submit">Login</button>
+  <input id="username" placeholder="Username"><br>
+  <input id="password" type="password" placeholder="Password"><br>
+  <button>Login</button>
 </form>
 
-<script type="module" src="login.js"></script>
-  <script type="module">
-  import { auth } from "./firebase.js";
-  import { signInWithEmailAndPassword, onAuthStateChanged } 
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-  // Idan user ya riga ya yi login, ka tura shi dashboard
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      window.location.href = "dashboard.html";
-    }
-  });
-
-  document.getElementById("loginForm").addEventListener("submit", (e)=>{
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    signInWithEmailAndPassword(auth, email, password)
-    .then(()=>{
-      alert("Login Successful!");
-      window.location.href = "dashboard.html";
-    })
-    .catch(()=>{
-      alert("Incorrect email or password");
-    });
-  });
-  </script>
-
+<script type="module" src="admin.js"></script>
 </body>
 </html>
-
