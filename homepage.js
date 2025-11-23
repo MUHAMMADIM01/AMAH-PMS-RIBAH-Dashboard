@@ -1,33 +1,37 @@
 import { db } from "./firebase.js";
-import {
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 async function loadMedicines() {
-  const list = document.getElementById("medicineList");
-  list.innerHTML = `<p>Loading...</p>`;
+  const list = document.getElementById("medList");
+  list.innerHTML = "Loading...";
 
   const snap = await getDocs(collection(db, "medicines"));
-
-  if (snap.empty) {
-    list.innerHTML = "<p>No medicines available yet.</p>";
-    return;
-  }
-
   list.innerHTML = "";
 
-  snap.forEach((doc) => {
-    const m = doc.data();
-
-    list.innerHTML += `
-      <div class="medicine-card">
-        <img src="${m.photo}" alt="${m.name}">
-        <h3>${m.name}</h3>
-        <p>${m.description}</p>
-      </div>
-    `;
+  snap.forEach(doc => {
+    const item = document.createElement("p");
+    item.textContent = doc.data().name;
+    list.appendChild(item);
   });
+
+  if (!snap.size) list.innerHTML = "No medicines uploaded yet.";
 }
 
-document.addEventListener("DOMContentLoaded", loadMedicines);
+async function loadTips() {
+  const list = document.getElementById("tipsList");
+  list.innerHTML = "Loading...";
+
+  const snap = await getDocs(collection(db, "tips"));
+  list.innerHTML = "";
+
+  snap.forEach(doc => {
+    const item = document.createElement("p");
+    item.textContent = doc.data().text;
+    list.appendChild(item);
+  });
+
+  if (!snap.size) list.innerHTML = "No health tips yet.";
+}
+
+loadMedicines();
+loadTips();
