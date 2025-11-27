@@ -1,58 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ha">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amah Medicine Store</title>
-  <link rel="stylesheet" href="style.css" />
-  <meta name="robots" content="noindex">
-  <script>
-    window.onerror = function(msg, url, line) {
-      console.warn('Error', msg, url, line);
-    };
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amah Medicine Store</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Debugging Error Popup -->
+    <script>
+        window.onerror = function (msg, url, line) {
+            alert("Error: " + msg + "\nLine: " + line);
+        };
+    </script>
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <h1>Amah Medicine Store</h1>
-      <p class="tag">Health & Wellness — Ribah</p>
-    </div>
-    <nav class="main-nav">
-      <a href="index.html">Home</a>
-      <a href="#health">Health Tips</a>
-      <a href="admin/login.html" class="admin-link">Admin</a>
-    </nav>
-  </header>
 
-  <main class="container">
-    <section id="hero" class="card">
-      <h2>Welcome</h2>
-      <p>Fast delivery and trusted medicines in your neighbourhood.</p>
+    <header>
+        <h1>💊 Amah Medicine Store</h1>
+        <p>Your Trusted Health Partner</p>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="#about">About Us</a>
+            <a href="#tips">Health Tips</a>
+            <a href="#contact">Contact</a>
+            <a href="admin/login.html">Admin</a>
+        </nav>
+    </header>
+
+    <section id="about">
+        <h2>About Us</h2>
+        <p>
+            Amah Medicine Store is a trusted community pharmacy located in Ribah,
+            offering safe medicines, health consultation, and home delivery.
+        </p>
     </section>
 
-    <section id="medicineSection" class="card">
-      <h2>Available Medicines</h2>
-      <div id="medicineList" class="grid">Loading medicines...</div>
+    <section id="medicines">
+        <h2>Available Medicines</h2>
+        <div id="medicineList">Loading...</div>
     </section>
 
-    <section id="health" class="card">
-      <h2>Health Tips</h2>
-      <div id="tipsList" class="tips">Loading tips...</div>
+    <section id="tips">
+        <h2>Health Tips</h2>
+        <div id="tipsList">Loading tips...</div>
     </section>
 
-    <section id="contact" class="card">
-      <h2>Contact</h2>
-      <p>📍 Opp. Nemi Naka Ribah, Kebbi State</p>
-      <p>📞 <a href="tel:+23470123456789">+234 701 234 56789</a> — WhatsApp available</p>
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>📍 Ribah, Kebbi State</p>
+
+        <a class="btn" href="https://wa.me/2348012345678">WhatsApp</a>
+        <a class="btn" href="mailto:amahstore@gmail.com">Email</a>
+        <a class="btn" href="tel:+2347012345678">Call</a>
     </section>
-  </main>
 
-  <footer class="footer">
-    <small>© 2025 Amah Medicine Store</small>
-  </footer>
+    <footer>
+        <p>© 2025 Amah Medicine Store</p>
+    </footer>
 
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="homepage.js"></script>
+    <script type="module" src="homepage.js"></script>
 </body>
 </html>
