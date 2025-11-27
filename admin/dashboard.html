@@ -1,1 +1,42 @@
-<!DOCTYPE html><html><body><h2>Dashboard</h2><a href='add_medicine.html'>Add Medicine</a></body></html>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Dashboard — Amah</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand"><h2>Admin Dashboard</h2></div>
+    <nav><a href="../index.html" class="btn">View site</a></nav>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h3>Add Medicine</h3>
+      <input id="medName" placeholder="Name"><br>
+      <textarea id="medDesc" placeholder="Description"></textarea><br>
+      <input id="medPhoto" type="file" accept="image/*"><br>
+      <button id="addMedBtn" class="btn">Add Medicine</button>
+    </div>
+
+    <div class="card">
+      <h3>Medicines</h3>
+      <div id="medList">Loading...</div>
+    </div>
+
+    <div class="card">
+      <h3>Add Health Tip</h3>
+      <input id="tipText" placeholder="Short tip"><br>
+      <button id="addTipBtn" class="btn">Add Tip</button>
+    </div>
+
+    <div class="card">
+      <h3>Tips</h3>
+      <div id="tipsList">Loading...</div>
+    </div>
+  </main>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
