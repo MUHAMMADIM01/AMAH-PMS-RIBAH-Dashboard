@@ -1,23 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ha">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amah Medicine Store</title>
-    <link rel="stylesheet" href="style.css">
-
-    <script>
-        window.onerror = function(msg, url, line) {
-            alert("Error: " + msg + "\nLine: " + line);
-        };
-    </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amah Medicine Store</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="robots" content="noindex">
+  <script>
+    window.onerror = function(msg, url, line) {
+      console.warn('Error', msg, url, line);
+    };
+  </script>
 </head>
-
 <body>
+  <header class="site-header">
+    <div class="brand">
+      <h1>Amah Medicine Store</h1>
+      <p class="tag">Health & Wellness — Ribah</p>
+    </div>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="#health">Health Tips</a>
+      <a href="admin/login.html" class="admin-link">Admin</a>
+    </nav>
+  </header>
 
-    <h1>Amah Medicine Store</h1>
+  <main class="container">
+    <section id="hero" class="card">
+      <h2>Welcome</h2>
+      <p>Fast delivery and trusted medicines in your neighbourhood.</p>
+    </section>
 
-    <script type="module" src="homepage.js"></script>
+    <section id="medicineSection" class="card">
+      <h2>Available Medicines</h2>
+      <div id="medicineList" class="grid">Loading medicines...</div>
+    </section>
 
+    <section id="health" class="card">
+      <h2>Health Tips</h2>
+      <div id="tipsList" class="tips">Loading tips...</div>
+    </section>
+
+    <section id="contact" class="card">
+      <h2>Contact</h2>
+      <p>📍 Opp. Nemi Naka Ribah, Kebbi State</p>
+      <p>📞 <a href="tel:+23470123456789">+234 701 234 56789</a> — WhatsApp available</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 Amah Medicine Store</small>
+  </footer>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="homepage.js"></script>
 </body>
 </html>
