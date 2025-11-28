@@ -1,6 +1,6 @@
 // SIMPLE ADMIN SECURITY
-const ADMIN_USER = "MIMUHAMMDU";
-const ADMIN_PASS = "ImM@115204122";  // Ka sauya bayan ka gwada
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "12345";  // Ka sauya bayan ka gwada
 
 function login() {
     const u = document.getElementById("username").value;
