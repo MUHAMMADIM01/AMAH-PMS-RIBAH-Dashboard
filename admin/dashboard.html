@@ -1,42 +1,52 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="ha">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Dashboard — Amah</title>
-  <link rel="stylesheet" href="../style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Amah Store</title>
+    <link rel="stylesheet" href="admin.css">
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="brand"><h2>Admin Dashboard</h2></div>
-    <nav><a href="../index.html" class="btn">View site</a></nav>
-  </header>
 
-  <main class="container">
-    <div class="card">
-      <h3>Add Medicine</h3>
-      <input id="medName" placeholder="Name"><br>
-      <textarea id="medDesc" placeholder="Description"></textarea><br>
-      <input id="medPhoto" type="file" accept="image/*"><br>
-      <button id="addMedBtn" class="btn">Add Medicine</button>
-    </div>
+<script>
+if (localStorage.getItem("isAdmin") !== "true") {
+    window.location.href = "login.html";
+}
+</script>
 
-    <div class="card">
-      <h3>Medicines</h3>
-      <div id="medList">Loading...</div>
-    </div>
+<h1>Amah Store Admin Dashboard</h1>
 
-    <div class="card">
-      <h3>Add Health Tip</h3>
-      <input id="tipText" placeholder="Short tip"><br>
-      <button id="addTipBtn" class="btn">Add Tip</button>
-    </div>
+<nav>
+    <button onclick="showSection('med')">Manage Medicines</button>
+    <button onclick="showSection('tips')">Manage Health Tips</button>
+    <button onclick="logout()">Logout</button>
+</nav>
 
-    <div class="card">
-      <h3>Tips</h3>
-      <div id="tipsList">Loading...</div>
-    </div>
-  </main>
+<!-- MEDICINES -->
+<div id="med" class="section">
 
-  <script type="module" src="admin.js"></script>
+    <h2>Add Medicine</h2>
+    <input id="medName" placeholder="Medicine Name">
+    <input id="medDesc" placeholder="Description (optional)">
+    <button onclick="addMedicine()">Add Medicine</button>
+
+    <h2>Available Medicines</h2>
+    <div id="medList">Loading...</div>
+</div>
+
+<!-- TIPS -->
+<div id="tips" class="section hidden">
+
+    <h2>Add Health Tip</h2>
+    <input id="tipText" placeholder="Enter tip">
+    <button onclick="addTip()">Add Tip</button>
+
+    <h2>Health Tips</h2>
+    <div id="tipsList">Loading...</div>
+</div>
+
+<script type="module" src="admin_logic.js"></script>
+
 </body>
 </html>
