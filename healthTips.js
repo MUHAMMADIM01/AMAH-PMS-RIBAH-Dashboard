@@ -1,15 +1,18 @@
-// Auto-rotate Tips
 let currentTip = 0;
 
 function rotateTips() {
-    const tipItems = document.querySelectorAll(".tip-item");
-    if (tipItems.length === 0) return;
+    const tips = document.querySelectorAll(".tip-item");
+    if (tips.length === 0) return;
 
-    tipItems.forEach((tip, index) => {
-        tip.style.display = (index === currentTip) ? "block" : "none";
-    });
+    // Hide all
+    tips.forEach(t => t.style.display = "none");
 
-    currentTip = (currentTip + 1) % tipItems.length;
+    // Show current one
+    tips[currentTip].style.display = "block";
+
+    // Move to next
+    currentTip = (currentTip + 1) % tips.length;
 }
 
-setInterval(rotateTips, 5000);
+// Start rotation every 4 seconds
+setInterval(rotateTips, 4000);
