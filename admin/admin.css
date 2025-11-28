@@ -1,0 +1,41 @@
+body {
+    font-family: Arial;
+    padding: 20px;
+}
+
+.login-box {
+    width: 300px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #aaa;
+    border-radius: 10px;
+}
+
+input {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+}
+
+button {
+    padding: 10px 15px;
+    background: #009688;
+    border: none;
+    color: white;
+    width: 100%;
+}
+
+.section {
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 6px;
+    border-radius: 8px;
+  }
