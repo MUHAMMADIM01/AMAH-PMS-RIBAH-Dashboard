@@ -41,11 +41,3 @@ section {
     border-radius: 5px;
     text-decoration: none;
 }
-
-.med-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 10px;
-    object-fit: cover;
-    margin-top: 8px;
-}
