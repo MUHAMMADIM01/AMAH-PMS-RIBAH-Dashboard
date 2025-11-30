@@ -2,31 +2,38 @@ import { db, storage } from "../firebase.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-document.getElementById("addBtn").addEventListener("click", async () => {
-    const name = document.getElementById("name").value.trim();
-    const desc = document.getElementById("desc").value.trim();
-    const imageFile = document.getElementById("medImage").files[0];
+const nameInput = document.getElementById("medicineName");
+const descInput = document.getElementById("medicineDesc");
+const imageInput = document.getElementById("medicineImage");
+const addBtn = document.getElementById("addMedicineBtn");
 
-    if (!name || !desc) {
+addBtn.addEventListener("click", async () => {
+    const name = nameInput.value.trim();
+    const description = descInput.value.trim();
+    const file = imageInput.files[0];
+
+    if (!name || !description) {
         alert("Please fill all fields");
         return;
     }
 
     let imageURL = "";
 
-    // Idan akwai hoto → upload
-    if (imageFile) {
-        const imgRef = ref(storage, "medicine_images/" + Date.now() + "_" + imageFile.name);
-        await uploadBytes(imgRef, imageFile);
-        imageURL = await getDownloadURL(imgRef);
+    // Upload image if selected
+    if (file) {
+        const storageRef = ref(storage, `medicines/${Date.now()}_${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        imageURL = await getDownloadURL(snapshot.ref);
     }
 
-    // Save zuwa Firestore
     await addDoc(collection(db, "medicines"), {
         name,
-        desc,
+        description,
         imageURL
     });
 
-    alert("Medicine Added Successfully!");
+    alert("Medicine added successfully!");
+    nameInput.value = "";
+    descInput.value = "";
+    imageInput.value = "";
 });
