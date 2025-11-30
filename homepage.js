@@ -19,8 +19,8 @@ async function loadMedicines() {
 
             item.innerHTML = `
                 <h3>${med.name}</h3>
-                <p>${med.desc}</p>
-                ${med.imageURL ? `<img src="${med.imageURL}" class="med-image">` : ""}
+                <p>${med.description || "No description available"}</p>
+                ${med.imageURL ? `<img src="${med.imageURL}" class="med-image">` : "<p>No image</p>"}
             `;
 
             container.appendChild(item);
