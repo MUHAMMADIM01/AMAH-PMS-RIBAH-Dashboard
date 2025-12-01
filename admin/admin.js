@@ -23,3 +23,38 @@ function login() {
         msg.innerHTML = "Incorrect username or password!";
     }
 }
+
+import { db, storage } from "./firebase.js";
+import { collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+async function addMedicine() {
+    const name = document.getElementById("medName").value.trim();
+    const desc = document.getElementById("medDesc").value.trim();
+    const imageFile = document.getElementById("medicineImage").files[0];
+
+    if (!name) {
+        alert("Medicine name is required");
+        return;
+    }
+
+    let imageURL = "";
+
+    // Upload image if selected
+    if (imageFile) {
+        const imageRef = ref(storage, `medicines/${Date.now()}_${imageFile.name}`);
+        await uploadBytes(imageRef, imageFile);
+        imageURL = await getDownloadURL(imageRef);
+    }
+
+    await addDoc(collection(db, "medicines"), {
+        name,
+        description: desc,
+        imageURL: imageURL || ""
+    });
+
+    alert("Medicine added successfully!");
+    location.reload();
+}
+
+window.addMedicine = addMedicine;
