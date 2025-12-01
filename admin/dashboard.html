@@ -1,52 +1,155 @@
 <!DOCTYPE html>
-<html lang="ha">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Amah Store</title>
-    <link rel="stylesheet" href="admin.css">
+    <title>Admin Dashboard - Amah Medicine Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #008000;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            background: green;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background: darkgreen;
+        }
+        .med-item {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+        img {
+            width: 120px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        .delete-btn {
+            background: red;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-
 <body>
 
-<script>
-if (localStorage.getItem("isAdmin") !== "true") {
-    window.location.href = "login.html";
-}
-</script>
+<h1>Admin Dashboard</h1>
 
-<h1>Amah Store Admin Dashboard</h1>
+<div class="container">
 
-<nav>
-    <button onclick="showSection('med')">Manage Medicines</button>
-    <button onclick="showSection('tips')">Manage Health Tips</button>
-    <button onclick="logout()">Logout</button>
-</nav>
+    <h2>Add New Medicine</h2>
 
-<!-- MEDICINES -->
-<div id="med" class="section">
+    <label>Medicine Name</label>
+    <input type="text" id="medName">
 
-    <h3>Add Medicine</h3>
+    <label>Description</label>
+    <textarea id="medDesc"></textarea>
 
-<input type="text" id="medName" placeholder="Medicine Name">
-<input type="text" id="medDesc" placeholder="Description (optional)">
-<input type="file" id="medicineImage" accept="image/*">
-<button onclick="addMedicine()">Add Medicine</button>
+    <label>Medicine Image</label>
+    <input type="file" id="medicineImage">
 
-    <h3>Add Health Tip</h3>
-<input type="text" id="tipText" placeholder="Enter health tip">
-<button onclick="addTip()">Add Tip</button>
+    <button onclick="addMedicine()">Add Medicine</button>
 
-<h3>Available Tips</h3>
-<div id="tipsList"></div>
-<h3>Available Medicines</h3>
-<div id="medicinesList"></div>
+    <hr>
 
-    <h2>Health Tips</h2>
-    <div id="tipsList">Loading...</div>
+    <h2>All Medicines</h2>
+    <div id="medList">Loading...</div>
+
 </div>
 
-<script type="module" src="admin_logic.js"></script>
+<script type="module">
+
+import { db, storage } from "./firebase.js";
+import { collection, getDocs, deleteDoc, doc } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { ref, deleteObject } 
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+// Load Medicines
+async function loadMedicines() {
+    const medList = document.getElementById("medList");
+    medList.innerHTML = "Loading...";
+
+    const querySnapshot = await getDocs(collection(db, "medicines"));
+
+    if (querySnapshot.empty) {
+        medList.innerHTML = "<p>No medicines found.</p>";
+        return;
+    }
+
+    let html = "";
+
+    querySnapshot.forEach((docu) => {
+        const data = docu.data();
+
+        html += `
+            <div class="med-item">
+                <h3>${data.name}</h3>
+                <p>${data.description}</p>
+                ${data.imageURL 
+                    ? `<img src="${data.imageURL}" alt="${data.name}">`
+                    : "<p>No Image</p>"
+                }
+                <button class="delete-btn" onclick="deleteMedicine('${docu.id}', '${data.imageURL}', '${data.name}')">
+                    Delete
+                </button>
+            </div>
+        `;
+    });
+
+    medList.innerHTML = html;
+}
+
+window.deleteMedicine = async function(id, imageURL, name) {
+    const confirmDelete = confirm(`Do you want to delete ${name}?`);
+
+    if (!confirmDelete) return;
+
+    // Delete image if exists
+    if (imageURL) {
+        const imgRef = ref(storage, imageURL);
+        await deleteObject(imgRef).catch(() => {});
+    }
+
+    await deleteDoc(doc(db, "medicines", id));
+    alert("Deleted successfully!");
+    loadMedicines();
+};
+
+// Run on page load
+loadMedicines();
+
+</script>
+
+<script src="./admin.js" type="module"></script>
 
 </body>
 </html>
