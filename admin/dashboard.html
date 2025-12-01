@@ -30,6 +30,16 @@ if (localStorage.getItem("isAdmin") !== "true") {
     <input id="medName" placeholder="Medicine Name">
     <input id="medDesc" placeholder="Description (optional)">
     <button onclick="addMedicine()">Add Medicine</button>
+    <input type="file" id="medicineImage" accept="image/*">
+
+    <h3>Add Health Tip</h3>
+
+<input type="text" id="tipText" placeholder="Enter health tip">
+
+<button onclick="addTip()">Add Tip</button>
+
+<h3>Available Tips</h3>
+<div id="tipsList"></div>
 
     <h2>Available Medicines</h2>
     <div id="medList">Loading...</div>
