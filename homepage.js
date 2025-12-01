@@ -9,25 +9,27 @@ async function loadMedicines() {
     try {
         const querySnapshot = await getDocs(collection(db, "medicines"));
 
-        container.innerHTML = ""; // Clear loading text
+        container.innerHTML = "";
 
-        querySnapshot.forEach((doc) => {
-            const med = doc.data();
+        querySnapshot.forEach((docItem) => {
+            const med = docItem.data();
 
-            const item = document.createElement("div");
-            item.classList.add("medicine-item");
+            const div = document.createElement("div");
+            div.classList.add("medicine-item");
 
-            item.innerHTML = `
+            div.innerHTML = `
                 <h3>${med.name}</h3>
                 <p>${med.description || "No description available"}</p>
-                ${med.imageURL ? `<img src="${med.imageURL}" class="med-image">` : "<p>No image</p>"}
+                ${med.imageURL 
+                    ? `<img src="${med.imageURL}" class="med-image">`
+                    : `<p>No image</p>`}
             `;
 
-            container.appendChild(item);
+            container.appendChild(div);
         });
-    } catch (error) {
+    } catch (err) {
         container.innerHTML = "❌ Failed to load medicines";
-        console.error(error);
+        console.error(err);
     }
 }
 
@@ -35,20 +37,28 @@ loadMedicines();
 
 // LOAD HEALTH TIPS
 async function loadTips() {
-    const tipsContainer = document.getElementById("healthTipsList");
-    tipsContainer.innerHTML = "";
+    const container = document.getElementById("healthTipsList");
+    container.innerHTML = "Loading...";
 
-    const querySnapshot = await getDocs(collection(db, "tips"));
+    try {
+        const querySnapshot = await getDocs(collection(db, "tips"));
 
-    querySnapshot.forEach((doc) => {
-        const tip = doc.data();
+        container.innerHTML = "";
 
-        const item = document.createElement("div");
-        item.classList.add("tip-item");
-        item.textContent = tip.text;
+        querySnapshot.forEach((docItem) => {
+            const tip = docItem.data();
 
-        tipsContainer.appendChild(item);
-    });
+            const div = document.createElement("div");
+            div.classList.add("tip-item");
+
+            div.textContent = tip.text;
+
+            container.appendChild(div);
+        });
+    } catch (err) {
+        container.innerHTML = "❌ Failed to load tips";
+        console.error(err);
+    }
 }
 
 loadTips();
