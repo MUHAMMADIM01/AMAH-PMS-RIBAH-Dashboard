@@ -58,3 +58,54 @@ async function addMedicine() {
 }
 
 window.addMedicine = addMedicine;
+
+async function loadTips() {
+    const list = document.getElementById("tipsList");
+    if (!list) return;
+
+    list.innerHTML = "Loading...";
+
+    const querySnapshot = await getDocs(collection(db, "tips"));
+
+    list.innerHTML = "";
+
+    querySnapshot.forEach((docData) => {
+        const tip = docData.data();
+        const id = docData.id;
+
+        const div = document.createElement("div");
+        div.classList.add("tip-item");
+
+        div.innerHTML = `
+            <p>${tip.text}</p>
+            <button onclick="deleteTip('${id}')">Delete</button>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+async function addTip() {
+    const text = document.getElementById("tipText").value.trim();
+
+    if (!text) {
+        alert("Please enter a tip");
+        return;
+    }
+
+    await addDoc(collection(db, "tips"), { text });
+
+    alert("Tip added!");
+    location.reload();
+}
+
+async function deleteTip(id) {
+    await deleteDoc(doc(db, "tips", id));
+    alert("Tip deleted");
+    location.reload();
+}
+
+loadTips();
+
+window.addTip = addTip;
+window.deleteTip = deleteTip;
