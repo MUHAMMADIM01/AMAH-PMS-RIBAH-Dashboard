@@ -26,31 +26,21 @@ if (localStorage.getItem("isAdmin") !== "true") {
 <!-- MEDICINES -->
 <div id="med" class="section">
 
-    <h2>Add Medicine</h2>
-    <input id="medName" placeholder="Medicine Name">
-    <input id="medDesc" placeholder="Description (optional)">
-    <button onclick="addMedicine()">Add Medicine</button>
-    <input type="file" id="medicineImage" accept="image/*">
+    <h3>Add Medicine</h3>
+
+<input type="text" id="medName" placeholder="Medicine Name">
+<input type="text" id="medDesc" placeholder="Description (optional)">
+<input type="file" id="medicineImage" accept="image/*">
+<button onclick="addMedicine()">Add Medicine</button>
 
     <h3>Add Health Tip</h3>
-
 <input type="text" id="tipText" placeholder="Enter health tip">
-
 <button onclick="addTip()">Add Tip</button>
 
 <h3>Available Tips</h3>
 <div id="tipsList"></div>
-
-    <h2>Available Medicines</h2>
-    <div id="medList">Loading...</div>
-</div>
-
-<!-- TIPS -->
-<div id="tips" class="section hidden">
-
-    <h2>Add Health Tip</h2>
-    <input id="tipText" placeholder="Enter tip">
-    <button onclick="addTip()">Add Tip</button>
+<h3>Available Medicines</h3>
+<div id="medicinesList"></div>
 
     <h2>Health Tips</h2>
     <div id="tipsList">Loading...</div>
