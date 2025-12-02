@@ -1,62 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amah Medicine Store — Home</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Amah Medicine Store — Home</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-<header class="header">
-    <h1>💉 Amah Medicine Store Ribah 💊</h1>
-    <p>Your Trusted Health Partner</p>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="#about">About Us</a>
-        <a href="#medicines">Medicines</a>
-        <a href="#tips">Health Tips</a>
-        <a href="#contact">Contact</a>
-        <a href="admin/login.html" class="admin-btn">Admin</a>
-    </nav>
-</header>
-
-<main>
-
-<section id="about" class="card">
-    <h2>About Us</h2>
-    <p>Amah Medicine Store is a trusted community pharmacy in Ribah, offering safe medicines, consultation & home delivery.</p>
-</section>
-
-<section id="medicines" class="card">
-    <h2>Available Medicines</h2>
-    <div id="medicineList" class="list-container">Loading...</div>
-</section>
-
-<section id="tips" class="card">
-    <h2>Health Tips</h2>
-    <div id="healthTipsList" class="tips-container">Loading...</div>
-</section>
-
-<section id="contact" class="card">
-    <h2>Contact Us</h2>
-    <p>📍 Ribah, Kebbi State</p>
-
-    <div class="contact-buttons">
-        <a href="https://wa.me/234" target="_blank">WhatsApp</a>
-        <a href="mailto:example@mail.com">Email</a>
-        <a href="tel:+234">Call</a>
+  <header class="site-header">
+    <div class="site-brand">
+      <h1>💉 Amah Medicine Store Ribah 💊</h1>
+      <p class="tagline">Your Trusted Health Partner</p>
     </div>
-</section>
 
-</main>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="#about">About Us</a>
+      <a href="#tips">Health Tips</a>
+      <a href="#contact">Contact</a>
+      <a href="admin/login.html" class="admin-link">Admin</a>
+    </nav>
+  </header>
 
-<footer>
+  <main class="container">
+
+    <section id="about" class="card">
+      <h2>About Us</h2>
+      <p>
+        Amah Medicine Store is a trusted community pharmacy located in Ribah,
+        offering safe medicines, health consultation, and home delivery.
+      </p>
+    </section>
+
+    <section id="medicines" class="card">
+      <h2>Available Medicines</h2>
+      <div id="medicineList" class="list-box">Loading...</div>
+    </section>
+
+    <section id="tips" class="card">
+      <h2>Health Tips</h2>
+      <div id="healthTipsList" class="list-box">Loading...</div>
+    </section>
+
+    <section id="contact" class="card">
+      <h2>Contact Us</h2>
+      <p>📍 Ribah, Kebbi State</p>
+
+      <a class="btn" href="https://wa.me/2348012345678">WhatsApp</a>
+      <a class="btn" href="mailto:amahstore@gmail.com">Email</a>
+      <a class="btn" href="tel:+2347012345678">Call</a>
+    </section>
+
+  </main>
+
+  <footer class="footer">
     © 2025 Amah Medicine Store
-</footer>
+  </footer>
 
-<script type="module" src="homepage.js"></script>
+  <!-- LOAD HOMEPAGE LOGIC -->
+  <script type="module" src="homepage.js"></script>
 </body>
-</html>
+          </html>
