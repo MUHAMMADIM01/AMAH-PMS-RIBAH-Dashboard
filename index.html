@@ -39,10 +39,10 @@
       <div id="medicineList" class="list-box">Loading...</div>
     </section>
 
-    <section id="tips" class="card">
-      <h2>Health Tips</h2>
-      <div id="healthTipsList" class="list-box">Loading...</div>
-    </section>
+    <h2>Health Tips</h2>
+<div id="tips-slider" class="tips-box">
+  <p id="current-tip">Loading...</p>
+</div>
 
     <section id="contact" class="card">
       <h2>Contact Us</h2>
@@ -61,5 +61,26 @@
 
   <!-- LOAD HOMEPAGE LOGIC -->
   <script type="module" src="homepage.js"></script>
+
+  <script>
+const tips = [
+  "Drink at least 8 glasses of water daily.",
+  "Exercise Regularly",
+  "Get sleep 7 - 8 hours every night.",
+  "Avoid taking antibiotics without prescription.",
+  "Eat fruits & vegetables to stay healthy."
+];
+
+let index = 0;
+
+function rotateTips() {
+  document.getElementById("current-tip").textContent = tips[index];
+  index = (index + 1) % tips.length;
+}
+
+rotateTips();
+setInterval(rotateTips, 3000); // rotate every 3 seconds
+  </script>
+  
 </body>
           </html>
