@@ -1,137 +1,162 @@
-/* Global */
+/* GENERAL RESET */
+*{box-sizing:border-box}
 body {
-  background: #111;
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #000;             /* dark background */
   color: #fff;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  -webkit-font-smoothing:antialiased;
 }
 
-.container {
-  width: 95%;
-  max-width: 900px;
-  margin: auto;
-}
-
-/* Header */
-.site-header {
-  background: #000;
-  padding: 20px;
-  text-align: center;
-  border-bottom: 2px solid #00eaff;
-}
-
-.site-brand h1 {
-  margin: 0;
-  font-size: 26px;
-  color: #00eaff;
-}
-
-.tagline {
-  margin-top: 5px;
-  font-size: 14px;
-  color: #ccc;
-}
-
-/* Navigation */
-.main-nav {
-  margin-top: 15px;
-  background: #222;
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.main-nav a {
-  color: #00eaff;
-  text-decoration: none;
-  margin: 0 10px;
-  font-weight: bold;
-}
-
-.main-nav a:hover {
-  text-decoration: underline;
-}
-
-/* Cards */
-.card {
-  background: #1a1a1a;
-  padding: 20px;
-  margin: 20px 0;
-  border-radius: 8px;
-  border: 1px solid #333;
-}
-
-.card h2 {
-  color: #00eaff;
-}
-
-/* Medicines List */
-.list-box {
-  margin-top: 10px;
-}
-
-.medicine-card {
-  background: #222;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #333;
-}
-
-.medicine-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.medicine-card h3 {
-  margin: 10px 0 5px;
-  color: #00eaff;
-}
-
-.medicine-card p {
-  color: #ccc;
-}
-
-/* Tips Slider */
-.tips-box {
-  background: #1a1a1a;
-  padding: 15px;
-  border: 1px solid #333;
-  border-radius: 8px;
-  margin: 20px 0;
-  text-align: center;
-  font-size: 18px;
-  min-height: 60px;
+/* HERO BANNER */
+.hero {
+  background: linear-gradient(0deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+              url("https://images.pexels.com/photos/5863391/pexels-photo-5863391.jpeg") center/cover no-repeat;
+  height: 260px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #00eaff;
+  text-align: center;
+  padding: 18px;
+  animation: fadeIn 1s ease-in-out;
 }
 
-/* Buttons */
-.btn {
+.hero-content h1 {
+  font-size: 24px;
+  color: #00eaff;
+  margin: 0;
+}
+
+.hero-content p {
+  color: #ffffffcc;
+  margin: 8px 0 0;
+}
+
+.hero-btn {
   display: inline-block;
-  margin-right: 10px;
-  padding: 10px 15px;
+  margin-top: 12px;
+  padding: 10px 18px;
   background: #00eaff;
   color: #000;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* HEADER */
+.site-header {
+  padding: 12px 18px;
+  text-align: center;
+  background: transparent;
+}
+
+.site-brand h1{margin:6px 0;font-size:18px;color:#00eaff}
+.site-brand .tagline{margin:0;color:#ccc;font-size:13px}
+
+.main-nav {margin-top:8px}
+.main-nav a {
+  color: #00eaff;
+  margin: 0 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size:14px;
+}
+
+/* CONTAINER */
+.container {
+  padding: 16px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* CARD */
+.card {
+  background: #121212;
+  padding: 18px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* MEDICINE BOX */
+.medicine-card {
+  background: #181818;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #222;
+}
+
+/* SEARCH BAR */
+.search-input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0 15px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0f0f0f;
+  color: #fff;
+}
+
+.search-input:focus {
+  border-color: #00eaff;
+  outline: none;
+}
+
+/* HEALTH TIPS */
+.tips-box {
+  background: #111;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  animation: slideIn 0.6s ease;
+  margin-bottom: 18px;
+}
+
+#current-tip {
+  color: #00eaff;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* CONTACT BTN */
+.btn {
+  display: inline-block;
+  margin: 5px 8px 0 0;
+  padding: 10px 15px;
+  background: #00eaff;
+  color: black;
   text-decoration: none;
   border-radius: 6px;
-  font-weight: bold;
 }
 
-.btn:hover {
-  background: #009bb3;
-}
-
-/* Footer */
+/* FOOTER */
 .footer {
-  background: #000;
-  color: #888;
   text-align: center;
-  padding: 15px;
-  margin-top: 30px;
-  border-top: 2px solid #00eaff;
+  padding: 18px;
+  margin-top: 20px;
+  background: #0b0b0b;
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE FIXES */
+@media (min-width: 768px) {
+  .hero { height: 320px; }
+  .hero-content h1 { font-size: 30px; }
+}
+
+@media (min-width: 1024px) {
+  .hero { height: 380px; }
+  .hero-content h1 { font-size: 38px; }
+  .card { padding: 28px; }
 }
