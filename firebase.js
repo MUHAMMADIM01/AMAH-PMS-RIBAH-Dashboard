@@ -1,25 +1,19 @@
 // firebase.js
-// Firebase modular SDK v10
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-/*
-   KA SA CAN NA KA PROJECT CONFIG A NAN
-   BAA BARIN "REPLACE_" BA.
-*/
-
 const firebaseConfig = {
-    apiKey: "AIzaSyC6Y6IHVFWQ3MoufpQpPod-a2tiE2mm3fU",
-    authDomain: "amah-store.firebaseapp.com",
-    projectId: "amah-store",
-    storageBucket: "amah-store.firebasestorage.app",
-    messagingSenderId: "673483173814",
-    appId: "1:673483173814:web:e4fc948ed749bb31c09b17"
+  apiKey: "REPLACE_WITH_YOUR_API_KEY",
+  authDomain: "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+  projectId: "REPLACE_WITH_YOUR_PROJECT_ID",
+  storageBucket: "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+  messagingSenderId: "REPLACE_WITH_YOUR_SENDER_ID",
+  appId: "REPLACE_WITH_YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
-
+export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
