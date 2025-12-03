@@ -1,81 +1,33 @@
-// homepage.js
-import { db } from "./firebase.js";
-import {
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// ROTATING HEALTH TIPS (frontend-only)
+const tips = [
+  "Drink at least 8 glasses of water daily.",
+  "Exercise Regularly.",
+  "Get 7–8 hours of sleep every night.",
+  "Avoid taking antibiotics without prescription.",
+  "Eat fruits & vegetables to stay healthy."
+];
 
-import { storage } from "./firebase.js";
-import {
-  ref,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-
-// -----------------------
-// LOAD MEDICINES
-// -----------------------
-async function loadMedicines() {
-  const container = document.getElementById("medicineList");
-  container.innerHTML = "Loading...";
-
-  try {
-    const querySnapshot = await getDocs(collection(db, "medicines"));
-
-    container.innerHTML = ""; // clear
-
-    querySnapshot.forEach((doc) => {
-      const med = doc.data();
-
-      const div = document.createElement("div");
-      div.classList.add("item-card");
-
-      div.innerHTML = `
-        <h3>${med.name || "Unnamed Medicine"}</h3>
-        <p>${med.description || "No description available"}</p>
-        ${
-          med.imageURL
-            ? `<img src="${med.imageURL}" class="item-image">`
-            : `<div class="no-image">No image</div>`
-        }
-      `;
-
-      container.appendChild(div);
-    });
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = "❌ Failed to load medicines.";
-  }
+let tipIndex = 0;
+function rotateTips() {
+  const el = document.getElementById("current-tip");
+  if (!el) return;
+  el.textContent = tips[tipIndex];
+  tipIndex = (tipIndex + 1) % tips.length;
 }
+rotateTips();
+setInterval(rotateTips, 3000);
 
-loadMedicines();
-
-
-// -----------------------
-// LOAD HEALTH TIPS
-// -----------------------
-async function loadTips() {
-  const container = document.getElementById("healthTipsList");
-  container.innerHTML = "Loading...";
-
-  try {
-    const querySnapshot = await getDocs(collection(db, "tips"));
-
-    container.innerHTML = "";
-
-    querySnapshot.forEach((doc) => {
-      const tip = doc.data();
-
-      const div = document.createElement("div");
-      div.classList.add("tip-item");
-      div.textContent = tip.text;
-
-      container.appendChild(div);
+// SIMPLE SEARCH (filter client-side)
+const searchBox = document.getElementById("searchBox");
+if (searchBox) {
+  searchBox.addEventListener("input", function () {
+    const q = this.value.trim().toLowerCase();
+    const cards = document.querySelectorAll(".medicine-card");
+    cards.forEach(card => {
+      const title = (card.querySelector("h3") || {textContent:""}).textContent.toLowerCase();
+      const desc  = (card.querySelector("p") || {textContent:""}).textContent.toLowerCase();
+      const show = title.includes(q) || desc.includes(q);
+      card.style.display = show ? "block" : "none";
     });
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = "❌ Failed to load tips.";
-  }
+  });
 }
-
-loadTips();
