@@ -1,155 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Amah Medicine Store</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #008000;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        button {
-            background: green;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-        }
-        button:hover {
-            background: darkgreen;
-        }
-        .med-item {
-            border: 1px solid #ddd;
-            padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-        }
-        img {
-            width: 120px;
-            border-radius: 6px;
-            margin-top: 10px;
-        }
-        .delete-btn {
-            background: red;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Admin Dashboard — Amah</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .list-row{background:#141414;border-radius:8px;padding:12px;margin-bottom:10px}
+    .row-actions{margin-top:8px}
+    .small-muted{color:#999;font-size:13px}
+    .danger{background:#e04b4b}
+  </style>
 </head>
 <body>
+  <main class="container">
+    <h1>Amah Store Admin Dashboard</h1>
 
-<h1>Admin Dashboard</h1>
+    <div class="card">
+      <div class="admin-actions">
+        <button id="manageMeds" class="hero-btn">Manage Medicines</button>
+        <button id="manageTips" class="hero-btn">Manage Tips</button>
+        <button id="logoutBtn" class="hero-btn">Logout</button>
+      </div>
 
-<div class="container">
+      <!-- ADD MEDICINE -->
+      <section id="medSection">
+        <h2>Add Medicine</h2>
+        <input id="medName" placeholder="Medicine name" />
+        <textarea id="medDesc" placeholder="Description (optional)"></textarea>
+        <input id="medImage" type="file" accept="image/*" />
+        <button id="addMedBtn" class="hero-btn">Add Medicine</button>
 
-    <h2>Add New Medicine</h2>
+        <h3>All Medicines</h3>
+        <div id="medList">Loading...</div>
+      </section>
 
-    <label>Medicine Name</label>
-    <input type="text" id="medName">
+      <!-- ADD TIP (hidden by default) -->
+      <section id="tipSection" style="display:none;margin-top:18px">
+        <h2>Add Health Tip</h2>
+        <input id="tipText" placeholder="Tip text" />
+        <input id="tipImage" type="file" accept="image/*" />
+        <button id="addTipBtn" class="hero-btn">Add Tip</button>
 
-    <label>Description</label>
-    <textarea id="medDesc"></textarea>
+        <h3>All Tips</h3>
+        <div id="tipList">Loading...</div>
+      </section>
+    </div>
+  </main>
 
-    <label>Medicine Image</label>
-    <input type="file" id="medicineImage">
-
-    <button onclick="addMedicine()">Add Medicine</button>
-
-    <hr>
-
-    <h2>All Medicines</h2>
-    <div id="medList">Loading...</div>
-
-</div>
-
-<script type="module">
-
-import { db, storage } from "./firebase.js";
-import { collection, getDocs, deleteDoc, doc } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { ref, deleteObject } 
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-
-// Load Medicines
-async function loadMedicines() {
-    const medList = document.getElementById("medList");
-    medList.innerHTML = "Loading...";
-
-    const querySnapshot = await getDocs(collection(db, "medicines"));
-
-    if (querySnapshot.empty) {
-        medList.innerHTML = "<p>No medicines found.</p>";
-        return;
-    }
-
-    let html = "";
-
-    querySnapshot.forEach((docu) => {
-        const data = docu.data();
-
-        html += `
-            <div class="med-item">
-                <h3>${data.name}</h3>
-                <p>${data.description}</p>
-                ${data.imageURL 
-                    ? `<img src="${data.imageURL}" alt="${data.name}">`
-                    : "<p>No Image</p>"
-                }
-                <button class="delete-btn" onclick="deleteMedicine('${docu.id}', '${data.imageURL}', '${data.name}')">
-                    Delete
-                </button>
-            </div>
-        `;
-    });
-
-    medList.innerHTML = html;
-}
-
-window.deleteMedicine = async function(id, imageURL, name) {
-    const confirmDelete = confirm(`Do you want to delete ${name}?`);
-
-    if (!confirmDelete) return;
-
-    // Delete image if exists
-    if (imageURL) {
-        const imgRef = ref(storage, imageURL);
-        await deleteObject(imgRef).catch(() => {});
-    }
-
-    await deleteDoc(doc(db, "medicines", id));
-    alert("Deleted successfully!");
-    loadMedicines();
-};
-
-// Run on page load
-loadMedicines();
-
-</script>
-
-<script src="./admin.js" type="module"></script>
-
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
