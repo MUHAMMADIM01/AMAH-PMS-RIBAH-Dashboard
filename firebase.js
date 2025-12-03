@@ -5,12 +5,13 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebas
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "REPLACE_WITH_YOUR_API_KEY",
-  authDomain: "REPLACE_WITH_YOUR_AUTH_DOMAIN",
-  projectId: "REPLACE_WITH_YOUR_PROJECT_ID",
-  storageBucket: "REPLACE_WITH_YOUR_STORAGE_BUCKET",
-  messagingSenderId: "REPLACE_WITH_YOUR_SENDER_ID",
-  appId: "REPLACE_WITH_YOUR_APP_ID"
+  apiKey: "AIzaSyC6Y6IHVFWQ3MoufpQpPod-a2tiE2mm3fU",
+  authDomain: "amah-store.firebaseapp.com",
+  databaseURL: "https://amah-store-default-rtdb.firebaseio.com",
+  projectId: "amah-store",
+  storageBucket: "amah-store.firebasestorage.app",
+  messagingSenderId: "673483173814",
+  appId: "1:673483173814:web:e4fc948ed749bb31c09b17"
 };
 
 const app = initializeApp(firebaseConfig);
