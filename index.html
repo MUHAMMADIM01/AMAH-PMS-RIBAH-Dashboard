@@ -9,14 +9,16 @@
 
 <body>
 
+  <!-- HERO BANNER -->
   <section class="hero">
-  <div class="hero-content">
-    <h1>Welcome to Amah Medicine Store</h1>
-    <p>Your trusted partner in health & wellness</p>
-    <a href="#medicines" class="hero-btn">View Medicines</a>
-  </div>
+    <div class="hero-content">
+      <h1>Welcome to Amah Medicine Store</h1>
+      <p>Your trusted partner in health & wellness</p>
+      <a href="#medicines" class="hero-btn">View Medicines</a>
+    </div>
   </section>
 
+  <!-- NAVIGATION -->
   <header class="site-header">
     <div class="site-brand">
       <h1>💉 Amah Medicine Store Ribah 💊</h1>
@@ -26,6 +28,7 @@
     <nav class="main-nav">
       <a href="index.html">Home</a>
       <a href="#about">About Us</a>
+      <a href="categories.html">Categories</a>
       <a href="#tips">Health Tips</a>
       <a href="#contact">Contact</a>
       <a href="admin/login.html" class="admin-link">Admin</a>
@@ -34,6 +37,7 @@
 
   <main class="container">
 
+    <!-- ABOUT US -->
     <section id="about" class="card">
       <h2>About Us</h2>
       <p>
@@ -42,21 +46,42 @@
       </p>
     </section>
 
+    <!-- MEDICINES -->
     <section id="medicines" class="card">
       <h2>Available Medicines</h2>
-      <div id="medicineList" class="list-box">Loading...</div>
+
+      <!-- Search Bar -->
+      <input id="searchBox" type="text" placeholder="Search medicine..." class="search-input"/>
+
+      <div id="medicineList" class="list-box">
+        <!-- Sample medicines (replace with DB later) -->
+        <div class="medicine-card">
+          <h3>Paracetamol</h3>
+          <p>Pain relief</p>
+          <p>No image</p>
+        </div>
+
+        <div class="medicine-card">
+          <h3>Vasoprin Tablet</h3>
+          <p>For cardiovascular</p>
+          <p>No image</p>
+        </div>
+      </div>
     </section>
 
-    <h2>Health Tips</h2>
-<div id="tips-slider" class="tips-box">
-  <p id="current-tip">Loading...</p>
-</div>
+    <!-- HEALTH TIPS -->
+    <h2 id="tips" class="title">Health Tips</h2>
 
+    <div id="tips-slider" class="tips-box">
+      <p id="current-tip">Loading...</p>
+    </div>
+
+    <!-- CONTACT -->
     <section id="contact" class="card">
       <h2>Contact Us</h2>
       <p>📍 Ribah, Kebbi State</p>
 
-      <a class="btn" href="https://wa.me/2348012345678">WhatsApp</a>
+      <a class="btn" href="https://wa.me/2348012345678" target="_blank" rel="noopener">WhatsApp</a>
       <a class="btn" href="mailto:amahstore@gmail.com">Email</a>
       <a class="btn" href="tel:+2347012345678">Call</a>
     </section>
@@ -67,28 +92,7 @@
     © 2025 Amah Medicine Store
   </footer>
 
-  <!-- LOAD HOMEPAGE LOGIC -->
-  <script type="module" src="homepage.js"></script>
+  <script src="homepage.js"></script>
 
-  <script>
-const tips = [
-  "Drink at least 8 glasses of water daily.",
-  "Exercise Regularly",
-  "Get sleep 7 - 8 hours every night.",
-  "Avoid taking antibiotics without prescription.",
-  "Eat fruits & vegetables to stay healthy."
-];
-
-let index = 0;
-
-function rotateTips() {
-  document.getElementById("current-tip").textContent = tips[index];
-  index = (index + 1) % tips.length;
-}
-
-rotateTips();
-setInterval(rotateTips, 3000); // rotate every 3 seconds
-  </script>
-  
 </body>
-          </html>
+</html>
