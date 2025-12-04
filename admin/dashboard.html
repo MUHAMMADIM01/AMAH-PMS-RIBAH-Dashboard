@@ -1,54 +1,60 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Admin Dashboard — Amah</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Amah Medicine Store</title>
+  <link rel="stylesheet" href="../style.css" />
   <style>
-    .admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-    .list-row{background:#141414;border-radius:8px;padding:12px;margin-bottom:10px}
-    .row-actions{margin-top:8px}
-    .small-muted{color:#999;font-size:13px}
-    .danger{background:#e04b4b}
+    .dash-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .dash-container h2 {
+      margin-bottom: 15px;
+    }
+    .med-box {
+      background: #f3f3f3;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .med-box img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .med-actions button {
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
-  <main class="container">
-    <h1>Amah Store Admin Dashboard</h1>
 
-    <div class="card">
-      <div class="admin-actions">
-        <button id="manageMeds" class="hero-btn">Manage Medicines</button>
-        <button id="manageTips" class="hero-btn">Manage Tips</button>
-        <button id="logoutBtn" class="hero-btn">Logout</button>
-      </div>
+  <header class="site-header">
+    <h1>Admin Dashboard</h1>
+  </header>
 
-      <!-- ADD MEDICINE -->
-      <section id="medSection">
-        <h2>Add Medicine</h2>
-        <input id="medName" placeholder="Medicine name" />
-        <textarea id="medDesc" placeholder="Description (optional)"></textarea>
-        <input id="medImage" type="file" accept="image/*" />
-        <button id="addMedBtn" class="hero-btn">Add Medicine</button>
+  <main class="dash-container">
 
-        <h3>All Medicines</h3>
-        <div id="medList">Loading...</div>
-      </section>
+    <h2>Add New Medicine</h2>
 
-      <!-- ADD TIP (hidden by default) -->
-      <section id="tipSection" style="display:none;margin-top:18px">
-        <h2>Add Health Tip</h2>
-        <input id="tipText" placeholder="Tip text" />
-        <input id="tipImage" type="file" accept="image/*" />
-        <button id="addTipBtn" class="hero-btn">Add Tip</button>
+    <input id="medName" placeholder="Medicine Name" class="input" />
+    <textarea id="medDesc" placeholder="Description" class="input"></textarea>
+    <input type="file" id="medicineImage" />
 
-        <h3>All Tips</h3>
-        <div id="tipList">Loading...</div>
-      </section>
-    </div>
+    <button onclick="addMedicine()" class="btn">Add Medicine</button>
+
+    <h2>All Medicines</h2>
+    <div id="medicineList">Loading...</div>
+
   </main>
 
   <script type="module" src="dashboard.js"></script>
+
 </body>
 </html>
