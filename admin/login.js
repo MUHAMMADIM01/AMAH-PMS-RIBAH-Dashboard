@@ -1,37 +1,53 @@
-// login.js
 import { auth, db } from "../firebase.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const emailEl = document.getElementById('email');
-const passEl = document.getElementById('password');
-const msgEl = document.getElementById('msg');
-const btn = document.getElementById('loginBtn');
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-btn.onclick = async () => {
-  const email = emailEl.value.trim();
-  const pass = passEl.value.trim();
-  if(!email || !pass){ msgEl.textContent = "Fill both fields"; msgEl.style.color='red'; return; }
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  const loginBtn = document.getElementById("loginBtn");
+  loginBtn.textContent = "Checking...";
+  loginBtn.disabled = true;
 
   try {
-    const cred = await signInWithEmailAndPassword(auth, email, pass);
-    const uid = cred.user.uid;
+    // Sign in normal Firebase user
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-    // check admins collection
-    const adminDoc = await getDoc(doc(db, 'admins', uid));
-    if(!adminDoc.exists()){
-      msgEl.textContent = "Account is not an admin.";
-      msgEl.style.color = "red";
-      await auth.signOut();
+    // Check if user exists in admins collection
+    const adminRef = doc(db, "admins", email);
+    const adminSnap = await getDoc(adminRef);
+
+    if (!adminSnap.exists()) {
+      alert("Account is not an admin.");
+      loginBtn.textContent = "Login";
+      loginBtn.disabled = false;
       return;
     }
 
-    msgEl.textContent = "Login successful — redirecting...";
-    msgEl.style.color = "green";
-    setTimeout(()=> window.location.href = 'dashboard.html', 900);
-  } catch (err) {
-    console.error(err);
-    msgEl.textContent = err.message || "Login failed";
-    msgEl.style.color = "red";
+    // Check role field
+    const role = adminSnap.data().role;
+    if (role !== "admin") {
+      alert("This account is not authorized as admin.");
+      loginBtn.textContent = "Login";
+      loginBtn.disabled = false;
+      return;
+    }
+
+    // Redirect to dashboard
+    window.location.href = "dashboard.html";
+
+  } catch (error) {
+    console.error(error);
+    alert("Login failed: " + error.message);
   }
-};
+
+  loginBtn.textContent = "Login";
+  loginBtn.disabled = false;
+});
