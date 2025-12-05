@@ -19,13 +19,11 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
     return;
   }
 
-  // Upload image to Firebase Storage
   const imageRef = ref(storage, `medicines/${Date.now()}_${file.name}`);
   await uploadBytes(imageRef, file);
 
   const imageUrl = await getDownloadURL(imageRef);
 
-  // Save to Firestore
   await addDoc(MedicinesCollection, {
     name,
     price,
