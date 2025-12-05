@@ -1,53 +1,42 @@
-import { auth, db } from "../firebase.js";
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { 
+  auth, 
+  signInWithEmailAndPassword,
+  db,
+  collection,
+  getDoc,
+  doc
+} from "./firebase.js";
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const password = document.getElementById("password").value.trim();
 
-  const loginBtn = document.getElementById("loginBtn");
-  loginBtn.textContent = "Checking...";
-  loginBtn.disabled = true;
+  if (!email || !password) {
+    alert("Please enter email and password.");
+    return;
+  }
 
   try {
-    // Sign in normal Firebase user
+    // Step 1: Login attempt
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Check if user exists in admins collection
-    const adminRef = doc(db, "admins", email);
+    // Step 2: Check admin in /admins collection
+    const adminRef = doc(collection(db, "admins"), user.uid);
     const adminSnap = await getDoc(adminRef);
 
     if (!adminSnap.exists()) {
       alert("Account is not an admin.");
-      loginBtn.textContent = "Login";
-      loginBtn.disabled = false;
       return;
     }
 
-    // Check role field
-    const role = adminSnap.data().role;
-    if (role !== "admin") {
-      alert("This account is not authorized as admin.");
-      loginBtn.textContent = "Login";
-      loginBtn.disabled = false;
-      return;
-    }
-
-    // Redirect to dashboard
-    window.location.href = "dashboard.html";
+    // Step 3: Redirect to dashboard
+    window.location.href = "./dashboard.html";
 
   } catch (error) {
-    console.error(error);
+    console.error("Login Failed:", error);
     alert("Login failed: " + error.message);
   }
-
-  loginBtn.textContent = "Login";
-  loginBtn.disabled = false;
 });
