@@ -28,6 +28,8 @@ export const app = initializeApp(firebaseConfig);
 // FIRESTORE
 export const db = getFirestore(app);
 export const MedicinesCollection = collection(db, "medicines");
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { doc, getDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // STORAGE
 export const storage = getStorage(app);
