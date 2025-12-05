@@ -1,16 +1,17 @@
-// Firebase App (core SDK)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { 
+  getStorage, 
+  ref, 
+  uploadBytes, 
+  getDownloadURL 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
 
-// Firestore
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-// Auth
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
-// Storage
-import { getStorage } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
-
-// Your Firebase Config
+// CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyC6Y6IHVFWQ3MoufpQpPod-a2tiE2mm3fU",
   authDomain: "amah-store.firebaseapp.com",
@@ -21,8 +22,15 @@ const firebaseConfig = {
   appId: "1:673483173814:web:e4fc948ed749bb31c09b17"
 };
 
-// Initialize Firebase
+// INITIALIZE
 export const app = initializeApp(firebaseConfig);
+
+// FIRESTORE
 export const db = getFirestore(app);
-export const auth = getAuth(app);
+export const MedicinesCollection = collection(db, "medicines");
+
+// STORAGE
 export const storage = getStorage(app);
+
+// EXPORT FUNCTIONS
+export { ref, uploadBytes, getDownloadURL, addDoc };
