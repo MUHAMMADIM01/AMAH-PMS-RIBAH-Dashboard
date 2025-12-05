@@ -1,27 +1,32 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <title>Admin Login — Amah</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <main class="container">
-    <h1>Admin Login</h1>
-    <div class="card">
+
+  <div class="login-container">
+    <h2>Admin Login</h2>
+
+    <form id="loginForm">
       <label>Email</label>
-      <input id="email" />
+      <input type="email" id="email" required />
+
       <label>Password</label>
-<input id="password" />
-<form id="loginForm">
+      <input type="password" id="password" required />
 
-      <div style="height:8px"></div>
-      <button id="loginBtn" class="hero-btn">Login</button>
-      <p id="msg"></p>
-    </div>
-  </main>
+      <button type="submit" id="loginBtn">Login</button>
+    </form>
+  </div>
 
-  <script type="module" src="login.js"></script>
+  <!-- VERY IMPORTANT: scripts at bottom -->
+  <script type="module" src="./firebase.js"></script>
+  <script type="module" src="./login.js"></script>
 </body>
+
 </html>
