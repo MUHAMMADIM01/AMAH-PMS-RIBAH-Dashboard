@@ -33,3 +33,6 @@ document.getElementById('addForm').addEventListener('submit', async (e) => {
   alert("Medicine added successfully!");
   e.target.reset();
 });
+
+<script type="module" src="./firebase.js"></script>
+<script type="module" src="./addmedicine.js"></script>
