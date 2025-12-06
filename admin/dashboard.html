@@ -1,29 +1,60 @@
-<!-- dashboard.html (snippet inside body) -->
-<!-- toast -->
-<div id="toast" class="toast" style="display:none"></div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard — Amah</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Admin Dashboard</h1>
+    <div>
+      <button id="logoutBtn" class="btn small">Logout</button>
+    </div>
+  </header>
 
-<!-- Add medicine -->
-<input id="medName" placeholder="Medicine name">
-<textarea id="medDesc" placeholder="Description"></textarea>
-<input id="medPhoto" type="file" accept="image/*">
-<button id="addMedBtn">Add Medicine</button>
+  <main class="container-grid">
+    <aside class="panel">
+      <h3>Admin Controls</h3>
+      <label>Change Password (reauth)</label>
+      <input id="currentPass" type="password" placeholder="Current password">
+      <input id="newPass" type="password" placeholder="New password">
+      <button id="changePassBtn" class="btn">Change Password</button>
 
-<div id="medList"></div>
+      <hr>
+      <h4>Backup / Restore</h4>
+      <button id="downloadBackup" class="btn">Download Backup</button>
+      <input id="restoreFile" type="file" accept=".json">
+      <button id="restoreBtn" class="btn">Restore Backup</button>
+    </aside>
 
-<!-- Tips -->
-<input id="tipTitle" placeholder="Tip title">
-<textarea id="tipDesc" placeholder="Tip description"></textarea>
-<button id="addTipBtn">Add Tip</button>
+    <section class="panel">
+      <h3>Add Medicine</h3>
+      <input id="medName" placeholder="Medicine name">
+      <textarea id="medDesc" placeholder="Short description"></textarea>
+      <input id="medImage" type="file" accept="image/*">
+      <button id="addMedBtn" class="btn">Add Medicine</button>
 
-<div id="tipsList"></div>
+      <hr>
 
-<!-- Backup/Restore -->
-<button id="downloadBackup">Download Backup</button>
-<input id="restoreFile" type="file" accept=".json">
-<button id="restoreBtn">Restore Backup</button>
+      <h3>Medicines</h3>
+      <div id="medList">Loading...</div>
+    </section>
 
-<!-- Logout -->
-<button id="logoutBtn">Logout</button>
+    <section class="panel">
+      <h3>Add Health Tip</h3>
+      <input id="tipText" placeholder="Tip text (emoji allowed)">
+      <button id="addTipBtn" class="btn">Add Tip</button>
 
-<!-- load the dashboard script -->
-<script type="module" src="./admin/dashboard.js"></script>
+      <hr>
+      <h3>Health Tips</h3>
+      <div id="tipsList">Loading...</div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module" src="./dashboard.js"></script>
+</body>
+</html>
