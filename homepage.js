@@ -1,65 +1,56 @@
 // homepage.js
-import { db } from "./firebase.js";
-import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { db, collection, onSnapshot, getDocs } from "./firebase.js";
 
-/* medicines render */
-const medContainer = document.getElementById('medicineList');
-const tipsContainer = document.getElementById('healthTipsList');
-const tipsSliderText = document.getElementById('current-tip'); // if using slider
+// render medicines
+const medListEl = document.getElementById("medicineList");
+const searchInput = document.getElementById("searchInput");
 
-// render medicines real-time
-const medsQ = query(collection(db,'medicines'), orderBy('createdAt','desc'));
-onSnapshot(medsQ, snapshot => {
-  if(!medContainer) return;
-  medContainer.innerHTML = '';
-  if(snapshot.empty){ medContainer.innerHTML = '<p>No medicines available yet.</p>'; return; }
-  snapshot.forEach(docSnap => {
-    const m = docSnap.data();
-    const el = document.createElement('div');
-    el.className = 'medicine-card';
-    el.innerHTML = `
-      ${ m.imageURL ? `<img src="${m.imageURL}" alt="${escapeHtml(m.name)}">` : `<div style="height:120px;background:#f0f0f0;border-radius:8px"></div>` }
+let medicines = [];
+
+function renderMedicines(filter=''){
+  const f = filter.trim().toLowerCase();
+  if(medicines.length === 0){ medListEl.innerHTML = '<div class="muted">No medicines yet</div>'; return; }
+  const filtered = medicines.filter(m => !f || m.name.toLowerCase().includes(f));
+  medListEl.innerHTML = filtered.map(m => `
+    <div class="medicine-card">
+      ${m.imageURL ? `<img src="${m.imageURL}" class="med-img" onerror="this.style.display='none'">` : `<div class="noimg">No image</div>`}
       <h3>${escapeHtml(m.name)}</h3>
-      <p>${escapeHtml(m.description || '')}</p>
-      <button class="btn-cart">🛒 Order</button>
-    `;
-    medContainer.appendChild(el);
+      <p class="muted">${escapeHtml(m.description || '')}</p>
+    </div>
+  `).join('');
+}
+
+// realtime medicines (onSnapshot)
+onSnapshot(collection(db, 'medicines'), snapshot => {
+  const arr = [];
+  snapshot.forEach(doc => {
+    arr.push({ id: doc.id, ...doc.data() });
   });
+  medicines = arr.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+  renderMedicines(searchInput.value || '');
 });
 
-// render tips and rotating
-let tipsArr = [];
-const tipsQ = query(collection(db,'tips'), orderBy('createdAt','desc'));
-onSnapshot(tipsQ, snap => {
-  tipsArr = [];
-  if(!tipsContainer) return;
-  tipsContainer.innerHTML = '';
-  if(snap.empty){
-    tipsContainer.innerHTML = '<p><em>No health tips yet.</em></p>';
-    return;
-  }
-  snap.forEach(d => {
-    const t = d.data();
-    // if you store an "icon" field, show it: t.icon
-    const icon = t.icon || '💡';
-    tipsArr.push(`${icon} ${t.title || t.text || ''} — ${t.description || ''}`);
-  });
-  // immediate show first
-  if(tipsArr.length > 0) {
-    let idx = 0;
-    if(document.getElementById('current-tip')){
-      document.getElementById('current-tip').textContent = tipsArr[0];
-    } else {
-      // fallback: render all
-      tipsContainer.innerHTML = tipsArr.map(x => `<div class="tips-box">${escapeHtml(x)}</div>`).join('');
-    }
-    // start rotating
-    clearInterval(window._tipsIntervalId);
-    window._tipsIntervalId = setInterval(()=> {
-      idx = (idx + 1) % tipsArr.length;
-      if(document.getElementById('current-tip')) document.getElementById('current-tip').textContent = tipsArr[idx];
-    }, 4000);
-  }
+// health tips rotating
+let tips = [];
+const currentTipEl = document.getElementById('currentTip');
+let tipIndex = 0;
+
+onSnapshot(collection(db, 'tips'), snapshot => {
+  tips = [];
+  snapshot.forEach(d => tips.push(d.data().text));
+  if(tips.length === 0){ currentTipEl.textContent = 'No tips yet'; return; }
+  tipIndex = 0;
+  currentTipEl.textContent = tips[0];
 });
+
+// rotate
+setInterval(()=>{
+  if(tips.length === 0) return;
+  tipIndex = (tipIndex + 1) % tips.length;
+  currentTipEl.textContent = tips[tipIndex];
+}, 4000);
+
+// search
+searchInput.addEventListener('input', e => renderMedicines(e.target.value));
 
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
