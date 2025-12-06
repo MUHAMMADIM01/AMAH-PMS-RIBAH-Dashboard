@@ -3,32 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Amah Medicine Store — Home</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Amah Medicine Store</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-  <!-- HERO BANNER -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Welcome to Amah Medicine Store</h1>
-      <p>Your trusted partner in health & wellness</p>
-      <a href="#medicines" class="hero-btn">View Medicines</a>
-    </div>
-  </section>
-
-  <!-- NAVIGATION -->
   <header class="site-header">
-    <div class="site-brand">
+    <div class="brand">
       <h1>💉 Amah Medicine Store Ribah 💊</h1>
       <p class="tagline">Your Trusted Health Partner</p>
     </div>
-
-    <nav class="main-nav">
+    <nav class="nav">
       <a href="index.html">Home</a>
-      <a href="#about">About Us</a>
-      <a href="categories.html">Categories</a>
+      <a href="#about">About</a>
       <a href="#tips">Health Tips</a>
       <a href="#contact">Contact</a>
       <a href="admin/login.html" class="admin-link">Admin</a>
@@ -36,63 +22,36 @@
   </header>
 
   <main class="container">
-
-    <!-- ABOUT US -->
-    <section id="about" class="card">
-      <h2>About Us</h2>
-      <p>
-        Amah Medicine Store is a trusted community pharmacy located in Ribah,
-        offering safe medicines, health consultation, and home delivery.
-      </p>
-    </section>
-
-    <!-- MEDICINES -->
-    <section id="medicines" class="card">
-      <h2>Available Medicines</h2>
-
-      <!-- Search Bar -->
-      <input id="searchBox" type="text" placeholder="Search medicine..." class="search-input"/>
-
-      <div id="medicineList" class="list-box">
-        <!-- Sample medicines (replace with DB later) -->
-        <div class="medicine-card">
-          <h3>Paracetamol</h3>
-          <p>Pain relief</p>
-          <p>No image</p>
-        </div>
-
-        <div class="medicine-card">
-          <h3>Vasoprin Tablet</h3>
-          <p>For cardiovascular</p>
-          <p>No image</p>
-        </div>
+    <section id="hero" class="card hero">
+      <img src="images/banner.jpg" alt="banner" class="banner">
+      <div class="hero-text">
+        <h2>Health & Wellness at Your Doorstep</h2>
+        <p>Fast home delivery, trusted medicines, local care.</p>
       </div>
     </section>
 
-    <!-- HEALTH TIPS -->
-    <h2 id="tips" class="title">Health Tips</h2>
+    <section id="medicines" class="card">
+      <h2>Available Medicines</h2>
+      <input id="searchInput" placeholder="Search medicines...">
+      <div id="medicineList" class="grid">Loading...</div>
+    </section>
 
-    <div id="tips-slider" class="tips-box">
-      <p id="current-tip">Loading...</p>
-    </div>
+    <section id="tips" class="card">
+      <h2>Health Tips</h2>
+      <div id="tipDisplay" class="tips-box"><p id="currentTip">Loading...</p></div>
+    </section>
 
-    <!-- CONTACT -->
     <section id="contact" class="card">
       <h2>Contact Us</h2>
       <p>📍 Ribah, Kebbi State</p>
-
-      <a class="btn" href="https://wa.me/2348012345678" target="_blank" rel="noopener">WhatsApp</a>
-      <a class="btn" href="mailto:amahstore@gmail.com">Email</a>
-      <a class="btn" href="tel:+2347012345678">Call</a>
+      <a href="https://wa.me/2348031577957" class="btn">WhatsApp</a>
+      <a href="mailto:amahmedicinestoreribah@gmail.com" class="btn">Email</a>
+      <a href="tel:+2347088900047" class="btn">Call</a>
     </section>
-
   </main>
 
-  <footer class="footer">
-    © 2025 Amah Medicine Store
-  </foote>
+  <footer class="footer">© 2025 Amah Medicine Store</footer>
 
-    <script type="module" src="./firebase.js"></script>
-
+  <script type="module" src="homepage.js"></script>
 </body>
-</html>
+                                  </html>
