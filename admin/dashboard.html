@@ -1,60 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - Amah Medicine Store</title>
-  <link rel="stylesheet" href="../style.css" />
-  <style>
-    .dash-container {
-      max-width: 800px;
-      margin: 40px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .dash-container h2 {
-      margin-bottom: 15px;
-    }
-    .med-box {
-      background: #f3f3f3;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    .med-box img {
-      width: 80px;
-      height: 80px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-    .med-actions button {
-      margin-right: 10px;
-    }
-  </style>
-</head>
-<body>
+<!-- dashboard.html (snippet inside body) -->
+<!-- toast -->
+<div id="toast" class="toast" style="display:none"></div>
 
-  <header class="site-header">
-    <h1>Admin Dashboard</h1>
-  </header>
+<!-- Add medicine -->
+<input id="medName" placeholder="Medicine name">
+<textarea id="medDesc" placeholder="Description"></textarea>
+<input id="medPhoto" type="file" accept="image/*">
+<button id="addMedBtn">Add Medicine</button>
 
-  <main class="dash-container">
+<div id="medList"></div>
 
-    <h2>Add New Medicine</h2>
+<!-- Tips -->
+<input id="tipTitle" placeholder="Tip title">
+<textarea id="tipDesc" placeholder="Tip description"></textarea>
+<button id="addTipBtn">Add Tip</button>
 
-    <input id="medName" placeholder="Medicine Name" class="input" />
-    <textarea id="medDesc" placeholder="Description" class="input"></textarea>
-    <input type="file" id="medicineImage" />
+<div id="tipsList"></div>
 
-    <button onclick="addMedicine()" class="btn">Add Medicine</button>
+<!-- Backup/Restore -->
+<button id="downloadBackup">Download Backup</button>
+<input id="restoreFile" type="file" accept=".json">
+<button id="restoreBtn">Restore Backup</button>
 
-    <h2>All Medicines</h2>
-    <div id="medicineList">Loading...</div>
+<!-- Logout -->
+<button id="logoutBtn">Logout</button>
 
-  </main>
-
-  <script type="module" src="dashboard.js"></script>
-
-</body>
-</html>
+<!-- load the dashboard script -->
+<script type="module" src="./admin/dashboard.js"></script>
