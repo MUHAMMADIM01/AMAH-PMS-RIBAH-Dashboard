@@ -1,45 +1,37 @@
-// login.js (COMPLETE WORKING)
-
+// admin/login.js
 import {
   auth,
   signInWithEmailAndPassword,
   db,
   doc,
   getDoc
-} from "./firebase.js";
+} from "../firebase.js";
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
+const form = document.getElementById("loginForm");
+const msg = document.getElementById("loginMsg");
+
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
+  msg.textContent = "Logging in...";
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
-
-  if (!email || !password) {
-    alert("Enter email and password");
-    return;
-  }
-
   try {
-    // STEP 1 — Login to Firebase Auth
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    const uid = userCred.user.uid;
 
-    // STEP 2 — Check if the email is an ADMIN
-    const adminRef = doc(db, "admins", user.uid);
-    const adminSnap = await getDoc(adminRef);
-
-    if (!adminSnap.exists()) {
-      alert("❌ This account is NOT an admin.");
+    // check admins collection
+    const adminDoc = await getDoc(doc(db, "admins", uid));
+    if (!adminDoc.exists()) {
+      msg.textContent = "❌ This account is not an admin.";
+      await auth.signOut();
       return;
     }
 
-    // STEP 3 — Store login state
-    localStorage.setItem("adminLoggedIn", "yes");
-
-    // STEP 4 — Redirect to dashboard
+    // success
+    localStorage.setItem("amah_admin", uid); // small session flag
     window.location.href = "dashboard.html";
-
-  } catch (error) {
-    alert("Login failed: " + error.message);
+  } catch (err) {
+    console.error(err);
+    msg.textContent = "Login failed: " + (err.message || err.code);
   }
 });
