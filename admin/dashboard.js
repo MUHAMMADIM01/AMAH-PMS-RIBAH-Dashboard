@@ -189,3 +189,6 @@ function initListeners(){
 }
 
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+
+<script type="module" src="./scripts/dashboard.js"></script>
