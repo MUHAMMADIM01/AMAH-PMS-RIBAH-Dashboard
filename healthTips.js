@@ -16,3 +16,4 @@ function rotateTips() {
 
 // Start rotation every 4 seconds
 setInterval(rotateTips, 4000);
+
